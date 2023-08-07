@@ -3,6 +3,6 @@ apiVersion: 1
 datasources:
   - name: datasource-prometheus
     type: prometheus
-    url: http://localhost:9090
+    url: http://9090-eabykov-keycloakcompose-wsr86ac6jmx.ws-eu102.gitpod.io
     access: proxy
     isDefault: true

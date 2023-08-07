@@ -112,3 +112,19 @@ services:
           memory: 250M
           cpus: '0.25'
     logging: *logging
+  
+  krakend: 
+    build:
+      context: ./docker
+      dockerfile: krakend.Dockerfile
+    depends_on:
+      - keycloak
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+          cpus: '0.25'
+    logging: *logging
+    ports:
+      - "8000:8000"
+      - "8090:8090"
