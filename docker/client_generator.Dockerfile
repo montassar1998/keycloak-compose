@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir Flask faker
 EXPOSE 5000
 
 # Specify the entrypoint command to run the generator code
-CMD ["python", "./generator.py"]
+CMD ["python", "./cg.py"]
