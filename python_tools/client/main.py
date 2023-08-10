@@ -1,28 +1,23 @@
-import requests
 import os
-import json
+from keycloak import KeycloakOpenID
 
 KEYCLOAK_URL = os.getenv("KC_HOSTNAME")
 KEYCLOAK_PORT = os.getenv("KEYCLOAK_PORT")
 REALM_NAME = os.getenv("KC_REALM_NAME")
-CLIENT_NAME = os.getenv("CLIENT_NAME")  # distinct from IMPORTER_NAME
-CLIENT_PASSWORD = os.getenv("CLIENT_PASSWORD")  # distinct from IMPORTER_PASSWORD
+CLIENT_NAME = "pyclient"
+USERNAME = os.getenv("USERNAME")
+USER_PASSWORD = os.getenv("USER_PASSWORD")
 
-# Authenticate with the 'PY-client' client using the client user's credentials
-data = {
-    "client_id": "pyclient",
-    "username": CLIENT_NAME,
-    "password": CLIENT_PASSWORD,
-    "grant_type": "password"
-}
+keycloak_openid = KeycloakOpenID(
+    server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
+    client_id=CLIENT_NAME,
+    realm_name=REALM_NAME
+)
 
-response = requests.post(f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/realms/{REALM_NAME}/protocol/openid-connect/token", data=data)
-response_data = response.json()
+# Obtain a token using the "password" grant type
+token_response = keycloak_openid.token(USERNAME, USER_PASSWORD)
+print(token_response)
 
-if "access_token" in response_data:
-    token = response_data["access_token"]
-    print(f"Successfully authenticated! Token: {token}")
-else:
-    print("Failed to authenticate. Check your credentials and Keycloak settings.")
-
-# If you want to continue and perform further actions, you can proceed from here.
+# You can extract the actual access token from the response
+access_token = token_response.get('access_token')
+print(access_token)

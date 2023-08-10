@@ -82,6 +82,7 @@ services:
           memory: 250M
           cpus: '0.25'
     logging: *logging
+  
   client_generator:
     build:
       context: .
@@ -95,7 +96,15 @@ services:
           cpus: '0.25'
     logging: *logging
     restart: unless-stopped
-
+  client: 
+    build: 
+      context: . 
+      dockerfile: ./docker/client.Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+          cpus: '0.25'
   importer:
     build:
       context: .
