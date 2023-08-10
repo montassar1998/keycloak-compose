@@ -15,16 +15,22 @@ time.sleep(60)  # Wait for 60 seconds or 1 minute
 print("Continuing with client operations...")
 
 while True:
-    keycloak_openid = KeycloakOpenID(
-        server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
-        client_id=CLIENT_NAME,
-        realm_name=REALM_NAME
-    )
+    try:
+        keycloak_openid = KeycloakOpenID(
+            server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
+            client_id=CLIENT_NAME,
+            realm_name=REALM_NAME
+        )
 
-    # Obtain a token using the "password" grant type
-    token_response = keycloak_openid.token(USERNAME, USER_PASSWORD)
-    print(token_response)
+        # Obtain a token using the "password" grant type
+        token_response = keycloak_openid.token(USERNAME, USER_PASSWORD)
+        print(token_response)
 
-    # You can extract the actual access token from the response
-    access_token = token_response.get('access_token')
-    print(access_token)
+        # You can extract the actual access token from the response
+        access_token = token_response.get('access_token')
+        print(access_token)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    time.sleep(60)

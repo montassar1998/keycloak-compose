@@ -35,3 +35,4 @@ while True:
             print(f"Successfully created user {user['username']}")
         except Exception as e:
             print(f"Failed to create user {user['username']}: {str(e)}")
+    
