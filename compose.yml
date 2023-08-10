@@ -130,3 +130,39 @@ services:
     ports:
       - "8000:8000"
       - "8090:8090"
+
+
+  client_generator:
+    build:
+      context: ./docker
+      dockerfile: client_generator.Dockerfile
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+          cpus: '0.25'
+    logging: *logging
+    restart: unless-stopped
+
+  importer:
+    build:
+      context: ./docker
+      dockerfile: importer.Dockerfile
+    environment:
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      KC_REALM_NAME: ${KC_REALM_NAME}
+      IMPORTER_NAME: ${IMPORTER_NAME}
+      IMPORTER_PASSWORD: ${IMPORTER_PASSWORD}
+      GENERATOR_NAME: client_generator
+    depends_on:
+      - keycloak
+      - client_generator
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+          cpus: '0.25'
+    logging: *logging
+    restart: unless-stopped

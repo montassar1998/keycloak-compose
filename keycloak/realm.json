@@ -51,6 +51,20 @@
           "value": "${GF_ADMIN_PASSWORD}"
         }
       ]
+    },
+    {
+      "id": "impoter",
+      "email": "${IMPORTER_NAME}@admin.com",
+      "username": "${IMPORTER_NAME}",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "${IMPORTER_PASSWORD}"
+        }
+      ]
     }
   ]
 }

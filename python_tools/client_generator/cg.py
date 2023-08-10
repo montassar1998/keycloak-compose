@@ -1,8 +1,22 @@
 import json
 import random
 from faker import Faker
+from flask import Flask, jsonify
 
 fake = Faker()
+app = Flask(__name__)
+
+@app.route('/all_users')
+def all_users():
+    with open('all_users.json', 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
+
+@app.route('/valid_users')
+def valid_users():
+    with open('valid_users.json', 'r') as f:
+        data = json.load(f)
+    return jsonify(data)
 
 def generate_user():
     return {
@@ -25,6 +39,9 @@ def main():
     # Save valid users
     with open('valid_users.json', 'w') as f:
         json.dump(valid_users, f, indent=4)
+
+    # Run Flask app
+    app.run(debug=True, port=5000)
 
 if __name__ == "__main__":
     main()
