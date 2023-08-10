@@ -1,7 +1,7 @@
-FROM alpine:3.14 as alpine
-RUN apk update
+FROM ubuntu:3.14 as alpine
+RUN apt update
 
-RUN apk add --no-cache gettext
+RUN apt install -y  gettext
 COPY ./docker/krakend.json /app/krakend.template.json
 COPY ./.env /app/.env
 RUN export $(grep -v '^#' /app/.env | xargs) && envsubst < /app/krakend.template.json > /app/krakend.json
