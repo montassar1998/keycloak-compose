@@ -2,7 +2,7 @@
 FROM devopsfaith/krakend:latest
 
 # Copy our custom krakend.json configuration into the container
-COPY krakend.json /etc/krakend/krakend.json
+COPY ./docker/krakend.json /etc/krakend/krakend.json
 RUN apt-get update && apt-get install -y gettext-base
 ADD krakend-entrypoint.sh /krakend-entrypoint.sh
 RUN chmod +x /krakend-entrypoint.sh
