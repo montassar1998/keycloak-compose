@@ -13,8 +13,8 @@ while True:
     # Create a Keycloak admin connection
     keycloak_admin = KeycloakAdmin(
         server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
-        username=IMPORTER_NAME,
-        password=IMPORTER_PASSWORD,
+        username="admin",
+        password="keycloak",
         realm_name=REALM_NAME,
         client_id="pyclient",
         verify=True # Change this to the path to your certificate if using self-signed, or False to disable verification.
