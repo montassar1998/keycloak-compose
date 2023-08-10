@@ -105,6 +105,15 @@ services:
         limits:
           memory: 250M
           cpus: '0.25'
+    environment:
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      KC_REALM_NAME: ${KC_REALM_NAME}
+      IMPORTER_NAME: ${IMPORTER_NAME}
+      IMPORTER_PASSWORD: ${IMPORTER_PASSWORD}
+      GENERATOR_NAME: client_generator
+      KEYCLOAK_PORT: ${KC_PORT}
+      USERNAME: test
+      USER_PASSWORD: 223
   importer:
     build:
       context: .
