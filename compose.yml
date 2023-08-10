@@ -134,8 +134,8 @@ services:
 
   client_generator:
     build:
-      context: ./docker
-      dockerfile: client_generator.Dockerfile
+      context: .
+      dockerfile: ./docker/client_generator.Dockerfile
     ports:
       - "5000:5000"
     deploy:
@@ -148,8 +148,8 @@ services:
 
   importer:
     build:
-      context: ./docker
-      dockerfile: importer.Dockerfile
+      context: .
+      dockerfile: ./docker/importer.Dockerfile
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_REALM_NAME: ${KC_REALM_NAME}

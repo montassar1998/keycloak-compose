@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY ../python_tools/client_generator/. /app
+COPY ./python_tools/client_generator/* /app
 
 # Install the required dependencies
 RUN pip install --no-cache-dir Flask faker
