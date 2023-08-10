@@ -96,6 +96,7 @@ services:
           cpus: '0.25'
     logging: *logging
     restart: unless-stopped
+
   client: 
     build: 
       context: . 
@@ -114,6 +115,9 @@ services:
       KEYCLOAK_PORT: ${KC_PORT}
       USERNAME: test
       USER_PASSWORD: 223
+    depends_on:
+      - client_generator
+      - keycloak
   importer:
     build:
       context: .
