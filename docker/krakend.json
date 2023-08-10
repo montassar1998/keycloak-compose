@@ -4,7 +4,7 @@
   "port": 8000,
   "endpoints": [
     {
-      "endpoint": "/keycloak/auth/realms/${KC_REALM_NAME}",
+      "endpoint": "/auth/realms/${KC_REALM_NAME}",
       "output_encoding": "json",
       "extra_config": {
         "github.com/devopsfaith/krakend-jose/validator": {
