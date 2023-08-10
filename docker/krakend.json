@@ -4,20 +4,20 @@
   "port": 8000,
   "endpoints": [
     {
-      "endpoint": "/auth/realms/${KC_REALM_NAME}",
+      "endpoint": "/auth/realms/authprovide",
       "output_encoding": "json",
       "extra_config": {
         "github.com/devopsfaith/krakend-jose/validator": {
           "alg": "RS256",
-          "jwk-url": "http://keycloak:8080/auth/realms/${KC_REALM_NAME}/protocol/openid-connect/certs",
-          "issuer": "http://keycloak:8080/auth/realms/${KC_REALM_NAME}",
+          "jwk-url": "http://keycloak:8080/auth/realms/authprovide/protocol/openid-connect/certs",
+          "issuer": "http://keycloak:8080/auth/realms/authprovide",
           "audience": ["grafana"],
           "roles_key": "realm_access.roles"
         }
       },
       "backend": [
         {
-          "url_pattern": "/auth/realms/${KC_REALM_NAME}",
+          "url_pattern": "/auth/realms/authprovide",
           "host": ["http://keycloak:8080"],
           "whitelist": ["id", "realm", "sslRequired", "enabled", "clients", "users"],
           "extra_config": {
