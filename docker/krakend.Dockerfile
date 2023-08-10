@@ -1,4 +1,5 @@
 
+
 # First stage: Set up the tools
 FROM debian:bullseye-slim AS builder
 RUN apt-get update && apt-get install -y gettext-base
@@ -25,3 +26,5 @@ EXPOSE 8000
 
 # Use our entrypoint script
 ENTRYPOINT ["/krakend-entrypoint.sh"]
+CMD [ "run", "-c", "/etc/krakend/krakend.json", "-p", "8000" ]
+
