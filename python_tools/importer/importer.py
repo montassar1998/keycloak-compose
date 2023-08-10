@@ -3,6 +3,7 @@ import os
 import json
 
 KEYCLOAK_URL = os.getenv("KC_HOSTNAME")
+KEYCLOAK_PORT = os.getenv("KEYCLOAK_PORT")
 REALM_NAME = os.getenv("KC_REALM_NAME")
 IMPORTER_NAME = os.getenv("IMPORTER_NAME")
 IMPORTER_PASSWORD = os.getenv("IMPORTER_PASSWORD")
@@ -15,7 +16,7 @@ data = {
     "grant_type": "password"
 }
 
-response = requests.post(f"{KEYCLOAK_URL}/auth/realms/{REALM_NAME}/protocol/openid-connect/token", data=data)
+response = requests.post(f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/realms/{REALM_NAME}/protocol/openid-connect/token", data=data)
 response_data = response.json()
 token = response_data["access_token"]
 
@@ -33,7 +34,7 @@ keycloak_users = [{"username": user["username"], "enabled": True, "credentials":
 
 # Import the users into Keycloak
 for user in keycloak_users:
-    response = requests.post(f"{KEYCLOAK_URL}/auth/admin/realms/{REALM_NAME}/users", headers=headers, json=user)
+    response = requests.post(f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/admin/realms/{REALM_NAME}/users", headers=headers, json=user)
     if response.status_code != 201:
         print(f"Failed to create user {user['username']}: {response.text}")
     else:
