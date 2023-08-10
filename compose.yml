@@ -46,6 +46,8 @@ services:
       GF_URL: ${GF_HOSTNAME}:${GF_SERVER_HTTP_PORT}
       GF_ADMIN_USERNAME: ${GF_ADMIN_USERNAME}
       GF_ADMIN_PASSWORD: ${GF_ADMIN_PASSWORD}
+
+      PY_CLIENT_URL: ${PY_CLIENT_URL}
     ports:
       - ${KC_PORT}:8080
     volumes:

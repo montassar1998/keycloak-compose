@@ -19,6 +19,22 @@
       "webOrigins": [
         "${GF_URL}"
       ]
+    },
+    {
+      "id": "admin-cli",
+      "clientId": "PY-client",
+      "name": "pyauth",
+      "enabled": true,
+      "publicClient": true,
+      "rootUrl": "${PY_URL}",
+      "adminUrl": "${PY_URL}",
+      "baseUrl": "${PY_URL}",
+      "redirectUris": [
+        "${PY_URL}/*"
+      ],
+      "webOrigins": [
+        "${PY_URL}"
+      ]
     }
   ],
   "users": [
