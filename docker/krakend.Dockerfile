@@ -1,4 +1,4 @@
-FROM ubuntu:3.14 as alpine
+FROM ubuntu as alpine
 RUN apt update
 
 RUN apt install -y  gettext
