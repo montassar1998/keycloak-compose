@@ -9,7 +9,7 @@ IMPORTER_NAME = os.getenv("IMPORTER_NAME")
 IMPORTER_PASSWORD = os.getenv("IMPORTER_PASSWORD")
 
 
-while true:
+while True:
     # Create a Keycloak admin connection
     keycloak_admin = KeycloakAdmin(
         server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",

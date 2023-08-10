@@ -8,6 +8,12 @@ CLIENT_NAME = "pyclient"
 USERNAME = os.getenv("USERNAME")
 USER_PASSWORD = os.getenv("USER_PASSWORD")
 
+import time
+
+print("Waiting for Keycloak to initialize...")
+time.sleep(60)  # Wait for 60 seconds or 1 minute
+print("Continuing with client operations...")
+
 while True:
     keycloak_openid = KeycloakOpenID(
         server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
