@@ -1,4 +1,6 @@
 FROM alpine:3.14 as alpine
+RUN apk update
+
 RUN apk add --no-cache gettext
 COPY ./docker/krakend.json /app/krakend.template.json
 COPY ./.env /app/.env
