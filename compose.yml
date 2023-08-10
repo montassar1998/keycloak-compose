@@ -108,7 +108,6 @@ services:
       GENERATOR_NAME: client_generator
       KEYCLOAK_PORT: ${KC_PORT}
     depends_on:
-      - keycloak
       - client_generator
     deploy:
       resources:

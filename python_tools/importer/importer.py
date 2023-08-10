@@ -8,9 +8,11 @@ REALM_NAME = os.getenv("KC_REALM_NAME")
 IMPORTER_NAME = os.getenv("IMPORTER_NAME")
 IMPORTER_PASSWORD = os.getenv("IMPORTER_PASSWORD")
 
+print(f"Connecting to: {KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/realms/{REALM_NAME}/protocol/openid-connect/token")
+
 # Authenticate with the 'PY-client' client using the importer user's credentials
 data = {
-    "client_id": "PY-client",
+    "client_id": "pyclient",
     "username": IMPORTER_NAME,
     "password": IMPORTER_PASSWORD,
     "grant_type": "password"

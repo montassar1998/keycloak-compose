@@ -22,18 +22,18 @@
     },
     {
       "id": "admin-cli",
-      "clientId": "PY-client",
+      "clientId": "pyclient",
       "name": "pyauth",
       "enabled": true,
       "publicClient": true,
-      "rootUrl": "${PY_URL}",
-      "adminUrl": "${PY_URL}",
-      "baseUrl": "${PY_URL}",
+      "rootUrl": "${PY_CLIENT_URL}",
+      "adminUrl": "${PY_CLIENT_URL}",
+      "baseUrl": "${PY_CLIENT_URL}",
       "redirectUris": [
-        "${PY_URL}/*"
+        "${PY_CLIENT_URL}/*"
       ],
       "webOrigins": [
-        "${PY_URL}"
+        "${PY_CLIENT_URL}"
       ]
     }
   ],
