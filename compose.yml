@@ -96,6 +96,9 @@ services:
           cpus: '0.25'
     logging: *logging
     restart: unless-stopped
+    depends_on:
+      - krakend
+      - keycloak
 
   client: 
     build: 
