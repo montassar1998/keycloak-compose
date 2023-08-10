@@ -17,7 +17,7 @@ COPY --from=alpine /app/krakend.json /app/krakend.json
 FROM devopsfaith/krakend:latest
 
 # Copy tools and files from the builder stage
-COPY krakend.json /etc/krakend/krakend.json
+COPY ./docker/krakend.json /etc/krakend/krakend.json
 
 
 # Expose KrakenD's default port
