@@ -8,7 +8,3 @@ if [ -f .env ]; then
 fi
 
 # Substitute environment variables in the KrakenD config template
-envsubst < /etc/krakend/krakend_template.json > /etc/krakend/krakend.json
-
-# Start KrakenD
-exec /usr/bin/krakend run -c /etc/krakend/krakend.json

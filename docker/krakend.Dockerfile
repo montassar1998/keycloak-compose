@@ -1,17 +1,20 @@
+FROM alpine:3.14 as alpine
+RUN apk add --no-cache gettext
+COPY ./docker/krakend.json /app/krakend.template.json
+COPY ./.env /app/.env
+RUN export $(grep -v '^#' /app/.env | xargs) && envsubst < /app/krakend.template.json > /app/krakend.json
+
+# First stage: Replace values in the krakend.json
+FROM busybox AS builder
+COPY --from=alpine /usr/bin/envsubst /usr/local/bin/
+COPY --from=alpine /app/krakend.json /app/krakend.json
 
 
-# First stage: Set up the tools
-FROM debian:bullseye-slim AS builder
-RUN apt-get update && apt-get install -y gettext-base
-
-# Copy krakend.json (this should be your template with placeholders)
-COPY ./docker/krakend.json /etc/krakend/krakend.template.json
 
 # Second stage: Set up the runtime environment
 FROM devopsfaith/krakend:latest
 
 # Copy tools and files from the builder stage
-COPY --from=builder /usr/bin/envsubst /usr/bin/envsubst
 COPY --from=builder /etc/krakend/krakend.template.json /etc/krakend/krakend.template.json
 
 # Copy the entrypoint script and the .env file
