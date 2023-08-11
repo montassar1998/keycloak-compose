@@ -8,10 +8,8 @@ WORKDIR /app
 COPY ./python_tools/importer/* /app
 
 # Install the required dependencies
-RUN pip install --no-cache-dir requests 
-RUN pip install --no-cache-dir python-keycloak
-RUN pip install --no-cache-dir pip install Flask-OIDC
+RUN pip install --no-cache-dir pip install Flask Flask-OIDC requests python-keycloak oauth2client
 
-
+EXPOSE 5000
 # Specify the entrypoint command to run the importer code
 CMD ["python", "./importer.py"]

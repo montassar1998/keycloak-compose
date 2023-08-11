@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config.update({
     'TESTING': True,
     'DEBUG': True,
-    'OIDC_CLIENT_SECRETS': 'auth.json',
+    'OIDC_CLIENT_SECRETS': 'client-secrets.json',
     'OIDC_ID_TOKEN_COOKIE_SECURE': False,
     'OIDC_REQUIRE_VERIFIED_EMAIL': False,
     'OIDC_USER_INFO_ENABLED': True,
