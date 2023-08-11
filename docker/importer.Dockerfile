@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.9-slim
+FROM python:3.7-slim
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./python_tools/importer/* /app
 
 # Install the required dependencies
-RUN pip install --upgrade --no-cache-dir flask flask-login flask-oidc
+RUN pip install --upgrade --no-cache-dir flask flask-login flask-oidc itsdangerous==1.1.0 markupsafe
 
 EXPOSE 5001
 # Specify the entrypoint command to run the importer code
