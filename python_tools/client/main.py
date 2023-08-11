@@ -31,6 +31,6 @@ while True:
         print(access_token)
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred in client : {e}")
 
     time.sleep(60)
