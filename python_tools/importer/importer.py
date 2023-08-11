@@ -13,6 +13,11 @@ import time
 print("Waiting for Keycloak to initialize...")
 time.sleep(60)  # Wait for 60 seconds or 1 minute
 print("Continuing with client operations...")
+print("KEYCLOAK_URL:", KEYCLOAK_URL)
+print("KEYCLOAK_PORT:", KEYCLOAK_PORT)
+print("REALM_NAME:", REALM_NAME)
+print("IMPORTER_NAME:", IMPORTER_NAME)
+print("IMPORTER_PASSWORD:", IMPORTER_PASSWORD)
 # Create a session with Keycloak
 keycloak_admin = KeycloakAdmin(server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
                                username=IMPORTER_NAME,
