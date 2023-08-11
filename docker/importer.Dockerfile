@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir pip install Flask Flask-OIDC requests python-keyc
 
 EXPOSE 5000
 # Specify the entrypoint command to run the importer code
-CMD ["python", " importer.py"]
+CMD ["python", " ./importer.py"]
