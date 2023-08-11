@@ -24,9 +24,6 @@ app.config.update({
     'OIDC_INTROSPECTION_AUTH_METHOD': 'client_secret_post'
     # 'OIDC_INTROSPECTION_AUTH_METHOD': 'bearer'
 })
-print(os.listdir())
-os.chdir("C:\\Users\\lwpro\\Projects\\KeyCloak2")
-
 oidc = OpenIDConnect(app)
 
 keycloak_openid = KeycloakOpenID(server_url="http://keycloak:8080/",
