@@ -18,38 +18,20 @@ print("KEYCLOAK_PORT:", KEYCLOAK_PORT)
 print("REALM_NAME:", REALM_NAME)
 print("IMPORTER_NAME:", IMPORTER_NAME)
 print("IMPORTER_PASSWORD:", IMPORTER_PASSWORD)
-# Create a session with Keycloak
-keycloak_admin = KeycloakAdmin(server_url=f"{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
-                               username=IMPORTER_NAME,
-                               password=IMPORTER_PASSWORD,
-                               realm_name=REALM_NAME,
-                               client_id="admin-cli",
-                               verify=True)
 
-# Fetch users from the provided URL
-response = requests.get("http://client_generator:5000/valid_users")
-users = response.json()
+from flask_oidc import OpenIDConnect
 
-# Import users into Keycloak
-for user in users:
-    try:
-        new_user = {
-            "username": user["username"],
-            "enabled": True,
-            "credentials": [{
-                "type": "password",
-                "value": user["password"],
-                "temporary": False
-            }]
-        }
-        user_created = keycloak_admin.create_user(new_user)
+app.config.update({
+    'OIDC_CLIENT_SECRETS': './client_secrets.json',
+    'OIDC_COOKIE_SECURE': False,  # Set to True in production
+    'OIDC_CALLBACK_ROUTE': '/oidc/callback',
+    'SECRET_KEY': 'YOUR_SECRET_KEY',
+    'OIDC_ID_TOKEN_COOKIE_NAME': 'oidc_token',
+})
 
-        if user_created:
-            print(f"User {user['username']} imported successfully!")
-        else:
-            print(f"Failed to import user {user['username']}.")
+oidc = OpenIDConnect(app)
+@app.route('/')
+@oidc.require_login
+def home():
+    return "Welcome, {}".format(oidc.user_getfield('preferred_username'))
 
-    except Exception as e:
-        print(f"Error importing user {user['username']}: {e}")
-
-print("User import finished!")

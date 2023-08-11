@@ -53,7 +53,7 @@
       ]
     },
     {
-      "id": "impoter",
+      "id": "importer",
       "email": "${IMPORTER_NAME}@admin.com",
       "username": "${IMPORTER_NAME}",
       "enabled": true,
