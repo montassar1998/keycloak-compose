@@ -1,37 +1,68 @@
-from keycloak import KeycloakAdmin
+import json
+import logging
 import os
-import requests
 
-# Load environment variables
-KEYCLOAK_URL = os.getenv("KC_HOSTNAME")
-KEYCLOAK_PORT = os.getenv("KEYCLOAK_PORT")
-REALM_NAME = os.getenv("KC_REALM_NAME")
-IMPORTER_NAME = os.getenv("IMPORTER_NAME")
-IMPORTER_PASSWORD = os.getenv("IMPORTER_PASSWORD")
-import time
-
-print("Waiting for Keycloak to initialize...")
-time.sleep(60)  # Wait for 60 seconds or 1 minute
-print("Continuing with client operations...")
-print("KEYCLOAK_URL:", KEYCLOAK_URL)
-print("KEYCLOAK_PORT:", KEYCLOAK_PORT)
-print("REALM_NAME:", REALM_NAME)
-print("IMPORTER_NAME:", IMPORTER_NAME)
-print("IMPORTER_PASSWORD:", IMPORTER_PASSWORD)
-
+from flask import Flask, g
 from flask_oidc import OpenIDConnect
+import requests
+from keycloak import KeycloakOpenID
+from oauth2client.client import OAuth2Credentials
 
+logging.basicConfig(level=logging.DEBUG)
+
+app = Flask(__name__)
 app.config.update({
-    'OIDC_CLIENT_SECRETS': './client_secrets.json',
-    'OIDC_COOKIE_SECURE': False,  # Set to True in production
-    'OIDC_CALLBACK_ROUTE': '/oidc/callback',
-    'SECRET_KEY': 'YOUR_SECRET_KEY',
-    'OIDC_ID_TOKEN_COOKIE_NAME': 'oidc_token',
+    'TESTING': True,
+    'DEBUG': True,
+    'OIDC_CLIENT_SECRETS': 'auth.json',
+    'OIDC_ID_TOKEN_COOKIE_SECURE': False,
+    'OIDC_REQUIRE_VERIFIED_EMAIL': False,
+    'OIDC_USER_INFO_ENABLED': True,
+    'OIDC_OPENID_REALM': 'flask-app',
+    'OIDC_SCOPES': ['openid', 'email', 'profile'],
+    'OIDC_TOKEN_TYPE_HINT': 'access_token',
+    'OIDC_INTROSPECTION_AUTH_METHOD': 'client_secret_post'
+    # 'OIDC_INTROSPECTION_AUTH_METHOD': 'bearer'
 })
+print(os.listdir())
+os.chdir("C:\\Users\\lwpro\\Projects\\KeyCloak2")
 
 oidc = OpenIDConnect(app)
+
+keycloak_openid = KeycloakOpenID(server_url="http://keycloak:8080/",
+                                 client_id="pyclient",
+                                 realm_name="master")
+
 @app.route('/')
 @oidc.require_login
-def home():
-    return "Welcome, {}".format(oidc.user_getfield('preferred_username'))
+def protected():
+    info = oidc.user_getinfo(['preferred_username', 'email', 'sub'])
+    username = info.get('preferred_username')
+    email = info.get('email')
+    sub = info.get('sub')
+    print("""user: %s, email:%s"""%(username, email))
 
+    token = oidc.get_access_token()
+    return ("""%s"""%token)
+
+
+@app.route('/private', methods=['POST'])
+@oidc.accept_token(require_token=True)
+def hello_api():
+    return("""user: %s, email:%s"""%(g.oidc_token_info['username'], g.oidc_token_info['preferred_username']))
+
+
+@app.route('/logout')
+def logout():
+    """Performs local logout by removing the session cookie."""
+    refresh_token = oidc.get_refresh_token()
+    oidc.logout()
+    if refresh_token is not None:
+        keycloak_openid.logout(refresh_token)
+    oidc.logout()
+    g.oidc_id_token = None
+    return 'Hi, you have been logged out! <a href="/">Return</a>'
+
+
+if __name__ == '__main__':
+    app.run()
