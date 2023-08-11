@@ -158,12 +158,11 @@ services:
     restart: unless-stopped
 
   grafana:
-    networks:
-      - ssonet
     build:
       context: ./docker
       dockerfile: grafana.Dockerfile
     restart: unless-stopped
+    network_mode: host
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://localhost:${GF_SERVER_HTTP_PORT}/healthz"]
     environment:
