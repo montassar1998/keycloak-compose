@@ -8,7 +8,11 @@ KEYCLOAK_PORT = os.getenv("KEYCLOAK_PORT")
 REALM_NAME = os.getenv("KC_REALM_NAME")
 IMPORTER_NAME = os.getenv("IMPORTER_NAME")
 IMPORTER_PASSWORD = os.getenv("IMPORTER_PASSWORD")
+import time
 
+print("Waiting for Keycloak to initialize...")
+time.sleep(60)  # Wait for 60 seconds or 1 minute
+print("Continuing with client operations...")
 # Create a session with Keycloak
 keycloak_admin = KeycloakAdmin(server_url=f"http://{KEYCLOAK_URL}:{KEYCLOAK_PORT}/auth/",
                                username=IMPORTER_NAME,
