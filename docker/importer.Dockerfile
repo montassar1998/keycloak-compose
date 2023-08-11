@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./python_tools/importer/* /app
 
 # Install the required dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade --no-cache-dir -r requirements.txt
 
 EXPOSE 5001
 # Specify the entrypoint command to run the importer code
