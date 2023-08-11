@@ -3,6 +3,8 @@ x-logging: &logging
   options:
     max-size: "10m"
     max-file: "3"
+networks:
+  ssonet:
 
 services:
   postgres:
@@ -16,6 +18,8 @@ services:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
       POSTGRES_PASSWORD: password
+    networks:
+      - ssonet
     volumes:
       - type: tmpfs
         target: /var/lib/postgresql/data
@@ -34,6 +38,8 @@ services:
       dockerfile: keycloak.Dockerfile
     command: ["start-dev", "--import-realm"]
     restart: unless-stopped
+    networks:
+      - ssonet
     environment:
       KC_DB: postgres
       KC_DB_USERNAME: keycloak
@@ -70,6 +76,8 @@ services:
       - '--storage.tsdb.wal-compression'
       - '--web.enable-lifecycle'
     restart: unless-stopped
+    networks:
+      - ssonet
     healthcheck:
       test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
     ports:
@@ -84,6 +92,8 @@ services:
     logging: *logging
   
   client_generator:
+    networks:
+      - ssonet
     build:
       context: .
       dockerfile: ./docker/client_generator.Dockerfile
@@ -101,6 +111,8 @@ services:
       - keycloak
 
   client: 
+    networks:
+      - ssonet
     build: 
       context: . 
       dockerfile: ./docker/client.Dockerfile
@@ -122,6 +134,8 @@ services:
       - client_generator
       - keycloak
   importer:
+    networks:
+      - ssonet
     build:
       context: .
       dockerfile: ./docker/importer.Dockerfile
@@ -144,6 +158,8 @@ services:
     restart: unless-stopped
 
   grafana:
+    networks:
+      - ssonet
     build:
       context: ./docker
       dockerfile: grafana.Dockerfile
@@ -176,6 +192,8 @@ services:
     logging: *logging
   
   krakend: 
+    networks:
+      - ssonet
     build:
       context: .
       dockerfile: ./docker/krakend.Dockerfile
