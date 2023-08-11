@@ -110,7 +110,7 @@ services:
       - krakend
       - keycloak
 
-  client: 
+  pyclient: 
     networks:
       - ssonet
     build: 
