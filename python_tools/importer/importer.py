@@ -1,7 +1,7 @@
 import requests
 
 # Define Keycloak parameters
-KEYCLOAK_URL = "http://keycloak:8080/auth"
+KEYCLOAK_URL = "http://keycloak:8080"
 REALM = "master"
 CLIENT_ID = "admin-cli"
 CLIENT_SECRET = "admin"  # If the client is confidential
