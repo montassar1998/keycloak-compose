@@ -12,7 +12,7 @@ PASSWORD = "keycloak"
 
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-valid_users_url = "http://client_generator:5000/valid_users"
+VALID_USERS_URL = "http://client_generator:5000/valid_users"
 
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
