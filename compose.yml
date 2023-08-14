@@ -99,7 +99,7 @@ services:
       context: .
       dockerfile: ./docker/client_generator.Dockerfile
     ports:
-      - "5000:5000"
+      - 5000:5000
     deploy:
       resources:
         limits:
