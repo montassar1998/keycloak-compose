@@ -29,6 +29,28 @@ def get_admin_access_token():
     else:
         return None
 
+MAX_RETRIES = 100
+RETRY_INTERVAL = 10  # seconds
+
+def is_keycloak_up():
+    try:
+        response = requests.get(KEYCLOAK_URL)
+        response.raise_for_status()
+        return True
+    except requests.RequestException:
+        return False
+
+retries = 0
+while retries < MAX_RETRIES:
+    if is_keycloak_up():
+        # Continue with the rest of your application logic
+        break
+    time.sleep(RETRY_INTERVAL)
+    retries += 1
+else:
+    print("Keycloak is still not up after several retries. Exiting...")
+    exit(1)
+
 def create_keycloak_user(username, password):
     admin_token = get_admin_access_token()
 
