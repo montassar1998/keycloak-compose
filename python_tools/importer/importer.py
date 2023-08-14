@@ -10,6 +10,12 @@ PASSWORD = "keycloak"
 
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+response = requests.get(valid_users_url)
+
+if response.status_code != 200:
+    print("Failed to retrieve valid users")
+    print("Response:", response.content)
+    exit(1)
 
 # Headers
 headers = {
@@ -25,11 +31,21 @@ data = {
     "password": PASSWORD
 }
 
-response = requests.post(token_url, data=data, headers=headers)
+for user in valid_users:
+    # Data payload for the token request
+    data = {
+        "grant_type": user.get("grant_type", "password"),  # Set default value to "password" if not present
+        "client_id": user["client_id"],
+        "client_secret": CLIENT_SECRET,
+        "username": user["username"],
+        "password": user["password"]
+    }
 
-if response.status_code == 200:
-    token = response.json()["access_token"]
-    print("Access token:", token)
-else:
-    print("Failed to retrieve access token")
-    print("Response:", response.content)
+    response = requests.post(token_url, data=data, headers=headers)
+
+    if response.status_code == 200:
+        token = response.json()["access_token"]
+        print(f"User {user['username']} is verified. Access token: {token}")
+    else:
+        print(f"Failed to verify user {user['username']}")
+        print("Response:", response.content)
