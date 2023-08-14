@@ -149,7 +149,6 @@ services:
       KEYCLOAK_PORT: ${KC_PORT}
     depends_on:
       - client_generator
-      - keycloak
     deploy:
       resources:
         limits:
