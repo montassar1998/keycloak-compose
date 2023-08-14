@@ -36,9 +36,8 @@ data = {
 for user in valid_users:
     # Data payload for the token request
     data = {
-        "grant_type": user.get("grant_type", "password"),  # Set default value to "password" if not present
+        "grant_type": "password",  # Set default value to "password" if not present
         "client_id": user["client_id"],
-        "client_secret": CLIENT_SECRET,
         "username": user["username"],
         "password": user["password"]
     }
