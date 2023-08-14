@@ -65,9 +65,9 @@ def create_users():
     # Fetch valid_users from the generator
     response = requests.get(VALID_USERS_URL)
     if response.status_code != 200:
+        print(f"the error content from the response {response.content}")
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
-    else 
-        print
+
     valid_users = response.json()
     users_created = 0
 
