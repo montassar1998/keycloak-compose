@@ -81,4 +81,6 @@ def create_users():
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":
+    with app.app_context():  # create an application context for the script
+        create_users()
     app.run(host='0.0.0.0', debug=True, port=5001)
