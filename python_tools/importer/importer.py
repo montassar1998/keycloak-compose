@@ -10,6 +10,7 @@ PASSWORD = "keycloak"
 
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+valid_users_url = "http://client_generator:5000/valid_users"
 response = requests.get(valid_users_url)
 
 if response.status_code != 200:
