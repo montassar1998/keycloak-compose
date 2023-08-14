@@ -17,7 +17,7 @@ if response.status_code != 200:
     print("Failed to retrieve valid users")
     print("Response:", response.content)
     exit(1)
-
+valid_users = response.json()
 # Headers
 headers = {
     "Content-Type": "application/x-www-form-urlencoded"
@@ -31,6 +31,7 @@ data = {
     "username": USERNAME,
     "password": PASSWORD
 }
+
 
 for user in valid_users:
     # Data payload for the token request
