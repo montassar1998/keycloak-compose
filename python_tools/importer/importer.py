@@ -1,5 +1,7 @@
 import requests
-
+from flask import Flask, jsonify
+import os 
+GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 # Define Keycloak parameters
 KEYCLOAK_URL = "http://keycloak:8080"
 REALM = "master"
@@ -12,42 +14,69 @@ PASSWORD = "keycloak"
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 valid_users_url = "http://client_generator:5000/valid_users"
 response = requests.get(valid_users_url)
-
-if response.status_code != 200:
-    print("Failed to retrieve valid users")
-    print("Response:", response.content)
-    exit(1)
-valid_users = response.json()
-# Headers
-headers = {
-    "Content-Type": "application/x-www-form-urlencoded"
-}
-
-# Data payload for the token request
-data = {
-    "grant_type": "password",
-    "client_id": CLIENT_ID,
-    "client_secret": CLIENT_SECRET,  # Add this line only if your client is confidential
-    "username": USERNAME,
-    "password": PASSWORD
-}
-
-
-for user in valid_users:
-    # Data payload for the token request
-    print(f"user: {user}")
+ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
+ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+app = Flask(__name__)
+def get_admin_access_token():
     data = {
-        "grant_type": "password",  # Set default value to "password" if not present
-        "client_id": user["client_id"],
-        "username": user["username"],
-        "password": user["password"]
+        "grant_type": "password",
+        "client_id": CLIENT_ID,
+        "username": USERNAME,
+        "password": PASSWORD
+    }
+    response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=data)
+    if response.status_code == 200:
+        return response.json()["access_token"]
+    else:
+        return None
+
+def create_keycloak_user(username, password):
+    admin_token = get_admin_access_token()
+
+    if not admin_token:
+        print("Failed to retrieve admin access token")
+        return False
+
+    headers = {
+        "Authorization": f"Bearer {admin_token}",
+        "Content-Type": "application/json"
     }
 
-    response = requests.post(token_url, data=data, headers=headers)
+    user_data = {
+        "username": username,
+        "enabled": True,
+        "credentials": [{
+            "type": "password",
+            "value": password,
+            "temporary": False
+        }]
+    }
 
-    if response.status_code == 200:
-        token = response.json()["access_token"]
-        print(f"User {user['username']} is verified. Access token: {token}")
+    response = requests.post(ADMIN_API_URL, headers=headers, json=user_data)
+    
+    if response.status_code in [200, 201]:
+        return True
     else:
-        print(f"Failed to verify user {user['username']}")
-        print("Response:", response.content)
+        return False
+
+@app.route('/create_users')
+def create_users():
+    # Fetch valid_users from the generator
+    response = requests.get(VALID_USERS_URL)
+    if response.status_code != 200:
+        return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
+    
+    valid_users = response.json()
+    users_created = 0
+
+    for user in valid_users:
+        username = user['username']
+        password = user['password']
+        
+        if create_keycloak_user(username, password):
+            users_created += 1
+
+    return jsonify({"message": f"Created {users_created} users in Keycloak"})
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=True, port=5001)
