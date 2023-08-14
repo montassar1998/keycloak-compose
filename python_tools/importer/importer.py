@@ -35,6 +35,7 @@ data = {
 
 for user in valid_users:
     # Data payload for the token request
+    print(f"user: {user}")
     data = {
         "grant_type": "password",  # Set default value to "password" if not present
         "client_id": user["client_id"],
