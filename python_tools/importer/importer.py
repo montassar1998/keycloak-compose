@@ -6,7 +6,6 @@ GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 KEYCLOAK_URL = "http://keycloak:8080"
 REALM = "master"
 CLIENT_ID = "admin-cli"
-CLIENT_SECRET = "admin"  # If the client is confidential
 USERNAME = "admin"
 PASSWORD = "keycloak"
 
@@ -76,9 +75,10 @@ def create_users():
         
         if create_keycloak_user(username, password):
             users_created += 1
-    print(f"Created {users_created} users in Keycloak")
+            print(f"Created {user} users in Keycloak")
+        else:
+            print(f"error when {user} in Keycloak")
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
-create_users()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5001)
