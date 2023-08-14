@@ -110,6 +110,8 @@ services:
     depends_on:
       - krakend
       - keycloak
+    environment:
+      GENERATOR_NAME: client_generator
 
   pyclient: 
     networks:

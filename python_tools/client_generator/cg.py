@@ -2,6 +2,8 @@ import json
 import random
 from faker import Faker
 from flask import Flask, jsonify
+import os
+SERVICE_NAME = os.getenv("GENERATOR_NAME")
 
 fake = Faker()
 app = Flask(__name__)
@@ -41,7 +43,7 @@ def main():
         json.dump(valid_users, f, indent=4)
 
     # Run Flask app
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0',debug=True, port=5000)
 
 if __name__ == "__main__":
     main()
