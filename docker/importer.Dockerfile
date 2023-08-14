@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./python_tools/importer/* /app
 
 # Install the required dependencies
-RUN pip install --upgrade --no-cache-dir requests
+RUN pip install --upgrade --no-cache-dir requests flask
 EXPOSE 5001
 # Specify the entrypoint command to run the importer code
 CMD ["python", "./importer.py"]
