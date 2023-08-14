@@ -55,6 +55,7 @@ def create_keycloak_user(username, password):
     response = requests.post(ADMIN_API_URL, headers=headers, json=user_data)
     
     if response.status_code in [200, 201]:
+        print(f"user {username} with password: {password} Created Successfully!")
         return True
     else:
         return False
@@ -75,8 +76,9 @@ def create_users():
         
         if create_keycloak_user(username, password):
             users_created += 1
-
+    print(f"Created {users_created} users in Keycloak")
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
+    
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5001)
