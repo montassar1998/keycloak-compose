@@ -157,7 +157,7 @@ services:
           memory: 250M
           cpus: '0.25'
     logging: *logging
-    restart: unless-stopped
+    restart: on-failure
 
   grafana:
     build:

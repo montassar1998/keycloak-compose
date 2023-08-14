@@ -1,6 +1,8 @@
 import requests
 from flask import Flask, jsonify
 import os 
+import time
+
 GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 # Define Keycloak parameters
 KEYCLOAK_URL = "http://keycloak:8080"
