@@ -101,12 +101,14 @@ def create_users():
         
         if create_keycloak_user(username, password):
             users_created += 1
-            print(f"Created {user} users in Keycloak")
+            print(f"Created {users_created}: {user} users in Keycloak")
         else:
             print(f"error when {user} in Keycloak")
+    exit(0)
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":
-    with app.app_context():  # create an application context for the script
+    with app.app_context(): 
         create_users()
+        
     app.run(host='0.0.0.0', debug=True, port=5001)
