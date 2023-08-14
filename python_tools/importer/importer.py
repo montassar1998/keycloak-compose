@@ -57,6 +57,7 @@ def create_keycloak_user(username, password):
         print(f"user {username} with password: {password} Created Successfully!")
         return True
     else:
+        print(f"Error in isnerter function : {response.status_code}")
         return False
 
 @app.route('/create_users')
@@ -65,7 +66,8 @@ def create_users():
     response = requests.get(VALID_USERS_URL)
     if response.status_code != 200:
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
-    
+    else 
+        print
     valid_users = response.json()
     users_created = 0
 
