@@ -78,7 +78,7 @@ def create_users():
             users_created += 1
     print(f"Created {users_created} users in Keycloak")
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
-    
+create_users()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5001)
