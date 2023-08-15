@@ -26,25 +26,54 @@ logging.basicConfig(level=logging.INFO)
 TOKEN_ENDPOINT_URL = f"{KEYCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token"
 
 app = Flask(__name__)
+def get_admin_access_token():
+    data = {
+        "grant_type": "password",
+        "client_id": CLIENT_NAME,
+        "username": USERNAME,
+        "password": PASSWORD
+    }
+    response = requests.post(TOKEN_ENDPOINT_URL, data=data)
+    if response.status_code == 200:
+        return response.json()["access_token"]
+    else:
+        return None
+def is_keycloak_up():
+    try:
+        response = requests.get(KEYCLOAK_URL)
+        response.raise_for_status()
+        return True
+    except requests.RequestException:
+        return False
+
+retries = 0
+while retries < MAX_RETRIES:
+    if is_keycloak_up():
+        # Continue with the rest of your application logic
+        break
+    time.sleep(RETRY_INTERVAL)
+    retries += 1
+else:
+    print("Keycloak is still not up after several retries. Exiting...")
+    exit(1)
+
 
 def authenticate_user(username, password):
     data = {
         "grant_type": "password",
-        "client_id": CLIENT_NAME,
+        "client_id": CLIENT_ID,
         "username": username,
         "password": password
     }
-    
-    try:
-        response = requests.post(TOKEN_ENDPOINT_URL, data=data)
-        response.raise_for_status()  # Will raise an exception if not a 2xx response
 
-        logging.info(f"User {username} authenticated successfully!")
-        print(f"User {username} authenticated successfully!")
+    # Send authentication request
+    response = requests.post(token_url, data=data)
+    
+    if response.status_code == 200:
+        print(f"User {username} with password: {password} Authenticated Successfully!")
         return True
-    except requests.RequestException as e:
-        logging.info(f"Authentication failed for user {username}. Error: {e}")
-        print(f"Authentication failed for user {username}. Error: {e}")
+    else:
+        print(f"Authentication failed for user {username}: {response.status_code}")
         return False
 
 @app.route('/authenticate_users')
