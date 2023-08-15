@@ -29,7 +29,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     logging: *logging
 
   keycloak:
@@ -89,7 +89,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     logging: *logging
   
   client_generator:
@@ -104,7 +104,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     logging: *logging
     restart: unless-stopped
     depends_on:
@@ -123,7 +123,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_REALM_NAME: ${KC_REALM_NAME}
@@ -136,6 +136,7 @@ services:
     depends_on:
       - client_generator
       - keycloak
+
   importer:
     networks:
       - ssonet
@@ -156,7 +157,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     logging: *logging
     restart: on-failure
 
@@ -189,7 +190,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     logging: *logging
   
   krakend: 
@@ -204,7 +205,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.25'
+          cpus: '0.75'
     logging: *logging
     env_file:
       - .env
