@@ -66,4 +66,6 @@ def authenticate_users():
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
 if __name__ == "__main__":
+    with app.app_context(): 
+        authenticate_users()
     app.run(host='0.0.0.0', port=5002)
