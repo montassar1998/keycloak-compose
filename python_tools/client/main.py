@@ -40,9 +40,11 @@ def authenticate_user(username, password):
         response.raise_for_status()  # Will raise an exception if not a 2xx response
 
         logging.info(f"User {username} authenticated successfully!")
+        print(f"User {username} authenticated successfully!")
         return True
     except requests.RequestException as e:
         logging.info(f"Authentication failed for user {username}. Error: {e}")
+        print(f"Authentication failed for user {username}. Error: {e}")
         return False
 
 @app.route('/authenticate_users')
