@@ -30,7 +30,7 @@ app = Flask(__name__)
 def authenticate_user(username, password):
     data = {
         "grant_type": "password",
-        "client_id": CLIENT_ID,
+        "client_id": CLIENT_NAME,
         "username": username,
         "password": password
     }
