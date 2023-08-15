@@ -3,6 +3,7 @@ from keycloak import KeycloakOpenID
 import requests
 import logging
 from flask import Flask, jsonify
+import time
 KEYCLOAK_URL = os.getenv("KC_HOSTNAME","http://keycloak:8080")
 KEYCLOAK_PORT = os.getenv("KEYCLOAK_PORT")
 REALM_NAME = os.getenv("KC_REALM_NAME")
@@ -10,11 +11,13 @@ CLIENT_NAME = "pyclient"
 USERNAME = os.getenv("USERNAME")
 USER_PASSWORD = os.getenv("USER_PASSWORD")
 ALL_USERS_URL = os.getenv("ALL_USERS_URL", "http://client_generator:5000/all_users")
-import time
+MAX_RETRIES = 100
+RETRY_INTERVAL = 10  # seconds
 
 print("Waiting for Keycloak to initialize...")
 time.sleep(60)  # Wait for 60 seconds or 1 minute
 print("Continuing with client operations...")
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
