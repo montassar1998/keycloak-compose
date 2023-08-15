@@ -91,11 +91,12 @@ def authenticate_users():
         for user in all_users:
             if authenticate_user(user['username'], user['password']):
                 authenticated_count += 1
-
+        exit(0)
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
     except requests.RequestException as e:
         logging.error(f"Error fetching all users: {e}")
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
+        exit(1)
 
 if __name__ == "__main__":
     with app.app_context(): 
