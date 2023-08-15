@@ -13,10 +13,11 @@ PASSWORD = "keycloak"
 
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-VALID_USERS_URL = "http://client_generator:5000/valid_users"
-
+SERVICE_NAME = os.getenv("VALID_USERS_URL")
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+
+
 app = Flask(__name__)
 def get_admin_access_token():
     data = {

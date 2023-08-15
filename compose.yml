@@ -131,8 +131,8 @@ services:
       IMPORTER_PASSWORD: ${IMPORTER_PASSWORD}
       GENERATOR_NAME: client_generator
       KEYCLOAK_PORT: ${KC_PORT}
-      USERNAME: test
-      USER_PASSWORD: 223
+      USERNAME: admin
+      USER_PASSWORD: keycloak
     depends_on:
       - client_generator
       - keycloak
@@ -149,6 +149,7 @@ services:
       IMPORTER_PASSWORD: ${IMPORTER_PASSWORD}
       GENERATOR_NAME: client_generator
       KEYCLOAK_PORT: ${KC_PORT}
+      VALID_USERS_URL: ${VALID_USERS_URL}
     depends_on:
       - client_generator
     deploy:

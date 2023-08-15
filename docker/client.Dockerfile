@@ -9,6 +9,6 @@ COPY ./python_tools/client/* /app
 
 # Install necessary dependencies
 RUN pip install python-keycloak
-
+EXPOSE 5002
 # Set the command to run the client script by default
 CMD ["python", "./main.py"]
