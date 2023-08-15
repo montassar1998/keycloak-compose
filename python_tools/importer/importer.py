@@ -13,7 +13,7 @@ PASSWORD = "keycloak"
 
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-SERVICE_NAME = os.getenv("VALID_USERS_URL")
+SERVICE_URL = os.getenv("VALID_USERS")
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 
@@ -88,7 +88,7 @@ def create_keycloak_user(username, password):
 @app.route('/create_users')
 def create_users():
     # Fetch valid_users from the generator
-    response = requests.get(VALID_USERS_URL)
+    response = requests.get(SERVICE_URL)
     if response.status_code != 200:
         print(f"the error content from the response {response.content}")
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
