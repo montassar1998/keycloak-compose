@@ -10,13 +10,13 @@ REALM = "master"
 CLIENT_ID = "pyclient"
 USERNAME = "admin"
 PASSWORD = "keycloak"
-
+IMPORTER_ENDPOINT="http://importer:5001"
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 SERVICE_URL = os.getenv("VALID_USERS")
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-
+ALL_USERS_URL = os.getenv("ALL_USERS_URL")
 
 app = Flask(__name__)
 def get_admin_access_token():
@@ -35,10 +35,10 @@ def get_admin_access_token():
 MAX_RETRIES = 100
 RETRY_INTERVAL = 10  # seconds
 
-def is_keycloak_up():
+def is_up(url):
     try:
-        response = requests.get(KEYCLOAK_URL)
-        print(f"Caught Keycloak Up ************************************\n"*100)
+        response = requests.get(url)
+        print(f"Caught {url} Up ************************************\n"*100)
         response.raise_for_status()
         return True
     except requests.RequestException:
@@ -46,7 +46,10 @@ def is_keycloak_up():
 
 retries = 0
 while retries < MAX_RETRIES:
-    if is_keycloak_up():
+    if is_up(KEYCLOAK_URL):
+        # Continue with the rest of your application logic
+        break
+    if is_up(IMPORTER_ENDPOINT):
         # Continue with the rest of your application logic
         break
     time.sleep(RETRY_INTERVAL)
