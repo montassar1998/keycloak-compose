@@ -137,6 +137,8 @@ services:
     depends_on:
       - client_generator
       - keycloak
+      - krakend
+      - importer
 
   importer:
     networks:

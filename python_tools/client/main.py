@@ -41,6 +41,7 @@ def get_admin_access_token():
         return response.json()["access_token"]
     else:
         return None
+        
 def is_keycloak_up():
     try:
         response = requests.get(KEYCLOAK_URL)
