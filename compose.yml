@@ -139,6 +139,7 @@ services:
       
     depends_on:
       - importer
+    restart: on-failure
     
 
   importer:

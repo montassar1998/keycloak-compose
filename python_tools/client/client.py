@@ -56,7 +56,6 @@ while retries < MAX_RETRIES:
     retries += 1
 else:
     print("Keycloak is still not up after several retries. Exiting...")
-    exit(1)
 
 def authenticate_user(username, password):
     data = {
