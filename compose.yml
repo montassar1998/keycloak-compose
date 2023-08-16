@@ -124,6 +124,8 @@ services:
         limits:
           memory: 250M
           cpus: '0.75'
+    ports: 
+      - 5002:5002
     environment:
       KC_HOSTNAME: ${KC_HOSTNAME}
       KC_REALM_NAME: ${KC_REALM_NAME}
@@ -135,9 +137,6 @@ services:
       USER_PASSWORD: keycloak
       
     depends_on:
-      - client_generator
-      - keycloak
-      - krakend
       - importer
 
   importer:
@@ -161,6 +160,8 @@ services:
         limits:
           memory: 250M
           cpus: '0.75'
+    ports:
+      - 5001:5001
     logging: *logging
     restart: on-failure
 
