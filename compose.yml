@@ -135,6 +135,7 @@ services:
       KEYCLOAK_PORT: ${KC_PORT}
       USERNAME: admin
       USER_PASSWORD: keycloak
+
       
     depends_on:
       - importer
