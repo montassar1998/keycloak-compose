@@ -14,13 +14,9 @@ ALL_USERS_URL = os.getenv("ALL_USERS_URL", "http://client_generator:5000/all_use
 MAX_RETRIES = 100
 RETRY_INTERVAL = 10  # seconds
 
-print("Waiting for Keycloak to initialize...")
-time.sleep(60)  # Wait for 60 seconds or 1 minute
-print("Continuing with client operations...")
-
 
 TOKEN_ENDPOINT_URL = f"{KEYCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token"
-
+print("this is the pyclient ")
 app = Flask(__name__)
 def get_admin_access_token():
     data = {
@@ -38,6 +34,7 @@ def get_admin_access_token():
 def is_keycloak_up():
     try:
         response = requests.get(KEYCLOAK_URL)
+        print(f"Keycloak response {response}")
         response.raise_for_status()
         return True
     except requests.RequestException:
