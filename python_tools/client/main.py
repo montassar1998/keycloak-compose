@@ -19,13 +19,6 @@ time.sleep(60)  # Wait for 60 seconds or 1 minute
 print("Continuing with client operations...")
 
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-
-# Define Keycloak parameters from Environment Variables
-
-
-
 TOKEN_ENDPOINT_URL = f"{KEYCLOAK_URL}/realms/{REALM_NAME}/protocol/openid-connect/token"
 
 app = Flask(__name__)
@@ -41,7 +34,7 @@ def get_admin_access_token():
         return response.json()["access_token"]
     else:
         return None
-        
+
 def is_keycloak_up():
     try:
         response = requests.get(KEYCLOAK_URL)
@@ -95,11 +88,11 @@ def authenticate_users():
         exit(0)
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
     except requests.RequestException as e:
-        logging.error(f"Error fetching all users: {e}")
+        print(f"Error fetching all users: {e}")
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
         exit(1)
 
 if __name__ == "__main__":
     with app.app_context(): 
         authenticate_users()
-    app.run(host='0.0.0.0', port=5002)
+    app.run(host='0.0.0.0', debug=True, port=5002)
