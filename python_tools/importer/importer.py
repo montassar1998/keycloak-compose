@@ -105,7 +105,7 @@ def create_users():
             print(f"Created {users_created}: {user} users in Keycloak")
         else:
             print(f"error when {user} in Keycloak")
-    exit(0)
+
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":
