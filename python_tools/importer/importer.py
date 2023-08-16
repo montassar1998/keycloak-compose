@@ -38,6 +38,7 @@ RETRY_INTERVAL = 10  # seconds
 def is_keycloak_up():
     try:
         response = requests.get(KEYCLOAK_URL)
+        print(f"Caught Keycloak Up ************************************\n"*100)
         response.raise_for_status()
         return True
     except requests.RequestException:
