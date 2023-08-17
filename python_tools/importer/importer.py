@@ -38,7 +38,7 @@ RETRY_INTERVAL = 10  # seconds
 def is_keycloak_up():
     try:
         response = requests.get(KEYCLOAK_URL)
-        print(f"Caught Keycloak Up ************************************\n"*100)
+        print(f"Importer Caught Keycloak Up ************************************\n")
         response.raise_for_status()
         return True
     except requests.RequestException:
@@ -108,7 +108,7 @@ def create_users():
             print(f"Created {users_created}: {user} users in Keycloak")
         else:
             print(f"error when {user} in Keycloak")
-
+    exit(0)
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":

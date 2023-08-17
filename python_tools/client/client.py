@@ -52,7 +52,7 @@ def authenticate_users():
     def is_up(url):
         try:
             response = requests.get(url)
-            print(f"Caught {url} Up ************************************\n"*100)
+            print(f"Client Caught {url} Up ************************************\n")
             response.raise_for_status()
             return True
         except requests.RequestException:
