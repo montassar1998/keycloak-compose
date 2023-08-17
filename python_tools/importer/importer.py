@@ -33,7 +33,7 @@ def get_admin_access_token():
         return None
 
 MAX_RETRIES = 100
-RETRY_INTERVAL = 10  # seconds
+RETRY_INTERVAL = 1  # seconds
 
 def is_keycloak_up():
     try:
@@ -113,7 +113,7 @@ def create_users():
             print(f"error when {user} in Keycloak")
 
     isImportDone=True
-    
+
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":
