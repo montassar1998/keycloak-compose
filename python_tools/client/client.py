@@ -28,6 +28,27 @@ app = Flask(__name__)
 
 
 def authenticate_user(username, password):
+    
+
+    data = {
+        "grant_type": "password",
+        "client_id": CLIENT_ID,
+        "username": username,
+        "password": password
+    }
+
+    # Send authentication request
+    response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=data)
+    
+    if response.status_code == 200:
+        print(f"User {username} Authenticated Successfully!")
+        return True
+    else:
+        print(f"Authentication failed for user {username}: {response.status_code}")
+        return False
+
+@app.route('/authenticate_users')
+def authenticate_users():
     MAX_RETRIES = 100
     RETRY_INTERVAL = 10  # seconds
     def is_up(url):
@@ -51,25 +72,6 @@ def authenticate_user(username, password):
     else:
         print("Keycloak is still not up after several retries. Exiting...")
         
-    data = {
-        "grant_type": "password",
-        "client_id": CLIENT_ID,
-        "username": username,
-        "password": password
-    }
-
-    # Send authentication request
-    response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=data)
-    
-    if response.status_code == 200:
-        print(f"User {username} Authenticated Successfully!")
-        return True
-    else:
-        print(f"Authentication failed for user {username}: {response.status_code}")
-        return False
-
-@app.route('/authenticate_users')
-def authenticate_users():
     try:
         response = requests.get(ALL_USERS_URL)
         response.raise_for_status()
