@@ -85,7 +85,9 @@ def create_keycloak_user(username, password):
     else:
         print(f"Error in isnerter function : {response.status_code}")
         return False
-
+@app.route('/')
+def Alive():
+     return jsonify({"status": "alive"})
 @app.route('/create_users')
 def create_users():
     # Fetch valid_users from the generator
