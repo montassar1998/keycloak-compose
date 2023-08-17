@@ -7,7 +7,7 @@ GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 # Define Keycloak parameters
 KEYCLOAK_URL = "http://keycloak:8080"
 REALM = "master"
-CLIENT_ID = "pyclient"
+CLIENT_ID = "admin-cli"
 USERNAME = "admin"
 PASSWORD = "keycloak"
 IMPORTER_ENDPOINT="http://importer:5001"
