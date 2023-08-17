@@ -28,7 +28,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     logging: *logging
 
@@ -88,7 +88,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     logging: *logging
   
@@ -103,7 +103,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     logging: *logging
     restart: unless-stopped
@@ -122,7 +122,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     ports: 
       - 5002:5002
@@ -161,7 +161,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     ports:
       - 5001:5001
@@ -196,7 +196,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     logging: *logging
   
@@ -211,7 +211,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 250M
+          memory: 500M
           cpus: '1'
     logging: *logging
     env_file:
