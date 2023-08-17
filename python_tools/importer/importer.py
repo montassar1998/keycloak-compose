@@ -12,7 +12,7 @@ REALM = "master"
 CLIENT_ID = "admin-cli"
 USERNAME = "admin"
 PASSWORD = "keycloak"
-
+isImportDone=False
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 SERVICE_URL = os.getenv("VALID_USERS")
@@ -121,5 +121,5 @@ def create_users():
 if __name__ == "__main__":
     with app.app_context(): 
         create_users()
-    isImportDone=False
+
     app.run(host='0.0.0.0', debug=True, port=5001)
