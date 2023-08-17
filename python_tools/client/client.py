@@ -60,7 +60,7 @@ else:
 def authenticate_user(username, password):
     data = {
         "grant_type": "password",
-        "client_id": CLIENT_NAME,
+        "client_id": CLIENT_ID,
         "username": username,
         "password": password
     }
