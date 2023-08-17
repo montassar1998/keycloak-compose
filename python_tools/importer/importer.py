@@ -3,6 +3,8 @@ from flask import Flask, jsonify
 import os 
 import time
 import socket
+import threading
+
 
 hostname = socket.gethostname()
 GENERATOR_NAME = os.getenv("GENERATOR_NAME")
@@ -118,6 +120,14 @@ def create_users():
     print(f"the value of IsImport is {isImportDone}")
     isImportDone=True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
-if __name__ == "__main__":
+def call_create_users_once_started():
+    time.sleep(5)  # Give the Flask server a few seconds to ensure it's up
+    try:
+        response = requests.get("http://0.0.0.0:5001/create_users")
+        print(f"Self-call response: {response.status_code}")
+    except Exception as e:
+        print(f"Failed self-call to /create_users: {e}")
 
+if __name__ == "__main__":
+    threading.Thread(target=call_create_users_once_started).start()
     app.run(host='0.0.0.0', debug=True, port=5001)
