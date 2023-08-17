@@ -95,7 +95,8 @@ def Alive():
         return jsonify(status="Import in progress"), 202
 @app.route('/create_users')
 def create_users():
-    global isImportDone=False
+    global isImportDone
+    isImportDone = False
     # Fetch valid_users from the generator
     response = requests.get(SERVICE_URL)
     if response.status_code != 200:
@@ -116,7 +117,6 @@ def create_users():
 
     print(f"the value of IsImport is {isImportDone}")
     isImportDone=True
-    exit(0)
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":
