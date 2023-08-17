@@ -19,7 +19,7 @@ SERVICE_URL = os.getenv("VALID_USERS")
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 
-isImportDone=False
+global isImportDone=False
 app = Flask(__name__)
 def get_admin_access_token():
     data = {
