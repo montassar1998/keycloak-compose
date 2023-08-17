@@ -61,17 +61,14 @@ def authenticate_users():
             return False
     retries = 0
     while retries < MAX_RETRIES:
-        if is_up(KEYCLOAK_URL):
-            # Continue with the rest of your application logic
-            break
-        if is_up(IMPORTER_ENDPOINT):
+        if is_up(KEYCLOAK_URL) and is_up(IMPORTER_ENDPOINT):
             # Continue with the rest of your application logic
             break
         time.sleep(RETRY_INTERVAL)
         retries += 1
     else:
         print("Keycloak is still not up after several retries. Exiting...")
-        
+
     try:
         response = requests.get(ALL_USERS_URL)
         response.raise_for_status()
