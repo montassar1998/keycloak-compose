@@ -19,45 +19,38 @@ ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect
 ALL_USERS_URL = os.getenv("ALL_USERS_URL")
 
 app = Flask(__name__)
-def get_admin_access_token():
-    data = {
-        "grant_type": "password",
-        "client_id": CLIENT_ID,
-        "username": USERNAME,
-        "password": PASSWORD
-    }
-    response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=data)
-    if response.status_code == 200:
-        return response.json()["access_token"]
-    else:
-        return None
 
-MAX_RETRIES = 100
-RETRY_INTERVAL = 10  # seconds
 
-def is_up(url):
-    try:
-        response = requests.get(url)
-        print(f"Caught {url} Up ************************************\n"*100)
-        response.raise_for_status()
-        return True
-    except requests.RequestException:
-        return False
 
-retries = 0
-while retries < MAX_RETRIES:
-    if is_up(KEYCLOAK_URL):
-        # Continue with the rest of your application logic
-        break
-    if is_up(IMPORTER_ENDPOINT):
-        # Continue with the rest of your application logic
-        break
-    time.sleep(RETRY_INTERVAL)
-    retries += 1
-else:
-    print("Keycloak is still not up after several retries. Exiting...")
+
+
+
+
 
 def authenticate_user(username, password):
+    MAX_RETRIES = 100
+    RETRY_INTERVAL = 10  # seconds
+    def is_up(url):
+        try:
+            response = requests.get(url)
+            print(f"Caught {url} Up ************************************\n"*100)
+            response.raise_for_status()
+            return True
+        except requests.RequestException:
+            return False
+    retries = 0
+    while retries < MAX_RETRIES:
+        if is_up(KEYCLOAK_URL):
+            # Continue with the rest of your application logic
+            break
+        if is_up(IMPORTER_ENDPOINT):
+            # Continue with the rest of your application logic
+            break
+        time.sleep(RETRY_INTERVAL)
+        retries += 1
+    else:
+        print("Keycloak is still not up after several retries. Exiting...")
+        
     data = {
         "grant_type": "password",
         "client_id": CLIENT_ID,
@@ -94,5 +87,6 @@ def authenticate_users():
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
 if __name__ == "__main__":
-    authenticate_users()
+    with app.app_context(): 
+        authenticate_users()
     app.run(host='0.0.0.0', debug=True, port=5002)
