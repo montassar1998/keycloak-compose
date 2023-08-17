@@ -36,7 +36,7 @@ def get_admin_access_token():
     else:
         return None
 
-MAX_RETRIES = 100
+MAX_RETRIES = 10
 RETRY_INTERVAL = 1  # seconds
 
 def is_keycloak_up():
@@ -84,10 +84,10 @@ def create_keycloak_user(username, password):
     response = requests.post(ADMIN_API_URL, headers=headers, json=user_data)
     
     if response.status_code in [200, 201]:
-        print(f"user {username} with password: {password} Created Successfully! {hostname}")
+        #print(f"user {username} with password: {password} Created Successfully! {hostname}")
         return True
     else:
-        print(f"Error in isnerter function : {response.status_code}  {hostname}")
+        #print(f"Error in isnerter function : {response.status_code}  {hostname}")
         return False
 @app.route('/importstatus')
 def Alive():
@@ -121,7 +121,7 @@ def create_users():
     isImportDone=True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 def call_create_users_once_started():
-    time.sleep(5)  # Give the Flask server a few seconds to ensure it's up
+    time.sleep(15)  # Give the Flask server a few seconds to ensure it's up
     try:
         response = requests.get("http://0.0.0.0:5001/create_users")
         print(f"Self-call response: {response.status_code}")
