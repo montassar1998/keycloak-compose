@@ -2,7 +2,9 @@ import requests
 from flask import Flask, jsonify
 import os 
 import time
+import socket
 
+hostname = socket.gethostname()
 GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 # Define Keycloak parameters
 KEYCLOAK_URL = "http://keycloak:8080"
@@ -80,10 +82,10 @@ def create_keycloak_user(username, password):
     response = requests.post(ADMIN_API_URL, headers=headers, json=user_data)
     
     if response.status_code in [200, 201]:
-        print(f"user {username} with password: {password} Created Successfully!")
+        print(f"user {username} with password: {password} Created Successfully! {hostname}")
         return True
     else:
-        print(f"Error in isnerter function : {response.status_code}")
+        print(f"Error in isnerter function : {response.status_code}  {hostname}")
         return False
 @app.route('/importstatus')
 def Alive():
