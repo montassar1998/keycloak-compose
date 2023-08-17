@@ -135,7 +135,7 @@ services:
       KEYCLOAK_PORT: ${KC_PORT}
       USERNAME: admin
       USER_PASSWORD: keycloak
-      ALL_USERS_URL: http://importer:5001/all_users
+      ALL_USERS_URL: http://client_generator:5000/all_users
       
     depends_on:
       - importer
