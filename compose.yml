@@ -29,7 +29,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     logging: *logging
 
   keycloak:
@@ -89,7 +89,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     logging: *logging
   
   client_generator:
@@ -104,7 +104,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     logging: *logging
     restart: unless-stopped
     depends_on:
@@ -123,7 +123,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     ports: 
       - 5002:5002
     environment:
@@ -162,7 +162,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     ports:
       - 5001:5001
     logging: *logging
@@ -197,7 +197,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     logging: *logging
   
   krakend: 
@@ -212,7 +212,7 @@ services:
       resources:
         limits:
           memory: 250M
-          cpus: '0.75'
+          cpus: '1'
     logging: *logging
     env_file:
       - .env
