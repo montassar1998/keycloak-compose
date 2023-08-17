@@ -17,7 +17,7 @@ SERVICE_URL = os.getenv("VALID_USERS")
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 
-
+isImportDone=False
 app = Flask(__name__)
 def get_admin_access_token():
     data = {
@@ -85,9 +85,12 @@ def create_keycloak_user(username, password):
     else:
         print(f"Error in isnerter function : {response.status_code}")
         return False
-@app.route('/')
+@app.route('/importstatus')
 def Alive():
-     return jsonify({"status": "alive"})
+    if isImportDone:
+        return jsonify(status="Import completed"), 200
+    else:
+        return jsonify(status="Import in progress"), 202
 @app.route('/create_users')
 def create_users():
     # Fetch valid_users from the generator
@@ -108,7 +111,8 @@ def create_users():
             print(f"Created {users_created}: {user} users in Keycloak")
         else:
             print(f"error when {user} in Keycloak")
-    exit(0)
+
+    isImportDone=True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":

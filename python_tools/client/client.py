@@ -22,11 +22,6 @@ app = Flask(__name__)
 
 
 
-
-
-
-
-
 def authenticate_user(username, password):
     data = {
         "grant_type": "password",
