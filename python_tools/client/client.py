@@ -47,14 +47,16 @@ def authenticate_users():
     def is_up(url):
         try:
             response = requests.get(url)
-            print(f"Client Caught {url} Up ************************************\n")
+            if response.status_code == 202:
+                return False
             response.raise_for_status()
+            print(f"Client Caught {url} Up ************************************\n")
             return True
         except requests.RequestException:
             return False
     retries = 0
     while retries < MAX_RETRIES:
-        if is_up(KEYCLOAK_URL):
+        if is_up(KEYCLOAK_URL) and is_up(f"{IMPORTER_ENDPOINT}/importstatus"):
             # Continue with the rest of your application logic
             break
         time.sleep(RETRY_INTERVAL)
@@ -79,6 +81,4 @@ def authenticate_users():
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
 if __name__ == "__main__":
-    with app.app_context(): 
-        authenticate_users()
     app.run(host='0.0.0.0', debug=True, port=5002)
