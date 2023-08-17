@@ -66,7 +66,7 @@ def authenticate_user(username, password):
     }
 
     # Send authentication request
-    response = requests.post(TOKEN_ENDPOINT_URL, data=data)
+    response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=data)
     
     if response.status_code == 200:
         print(f"User {username} Authenticated Successfully!")
