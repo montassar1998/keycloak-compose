@@ -43,7 +43,7 @@ def authenticate_user(username, password):
 @app.route('/authenticate_users')
 def authenticate_users():
     MAX_RETRIES = 100
-    RETRY_INTERVAL = 10  # seconds
+    RETRY_INTERVAL = 1  # seconds
     def is_up(url):
         try:
             response = requests.get(url)

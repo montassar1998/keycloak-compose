@@ -107,13 +107,13 @@ def create_users():
     for user in valid_users:
         username = user['username']
         password = user['password']
-        
         if create_keycloak_user(username, password):
             users_created += 1
             print(f"Created {users_created}: {user} users in Keycloak")
         else:
             print(f"error when {user} in Keycloak")
 
+    print(f"the value of IsImport is {isImportDone}")
     isImportDone=True
 
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
