@@ -95,6 +95,7 @@ def Alive():
         return jsonify(status="Import in progress"), 202
 @app.route('/create_users')
 def create_users():
+    global isImportDone=False
     # Fetch valid_users from the generator
     response = requests.get(SERVICE_URL)
     if response.status_code != 200:
