@@ -58,8 +58,10 @@ def authenticate_users():
     while retries < MAX_RETRIES:
         if is_up(KEYCLOAK_URL) and is_up(f"{IMPORTER_ENDPOINT}/importstatus"):
             # Continue with the rest of your application logic
-            print("Client is not Ready yet ")
+            
             break
+        else:
+            print("Client is not Ready yet ")
         time.sleep(RETRY_INTERVAL)
         retries += 1
     else:

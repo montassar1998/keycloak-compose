@@ -118,9 +118,9 @@ def create_users():
     print(f"the value of IsImport is {isImportDone}")
     isImportDone=True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
-
-if __name__ == "__main__":
-    with app.app_context(): 
+def initialize_users():
+    with app.app_context():
         create_users()
-
+if __name__ == "__main__":
+    initialize_users()
     app.run(host='0.0.0.0', debug=True, port=5001)
