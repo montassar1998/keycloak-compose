@@ -36,7 +36,7 @@ def get_admin_access_token():
     else:
         return None
 
-MAX_RETRIES = 10
+MAX_RETRIES = 100
 RETRY_INTERVAL = 1  # seconds
 
 def is_keycloak_up():
