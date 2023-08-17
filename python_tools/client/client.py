@@ -47,7 +47,7 @@ def authenticate_user(username, password):
 
 @app.route('/authenticate_users')
 def authenticate_users():
-    MAX_RETRIES = 100
+    MAX_RETRIES = 50
     RETRY_INTERVAL = 1  # seconds
     def is_up(url):
         try:
@@ -59,7 +59,7 @@ def authenticate_users():
             return False
     retries = 0
     while retries < MAX_RETRIES:
-        if is_up(KEYCLOAK_URL) and is_up(IMPORTER_ENDPOINT):
+        if is_up(KEYCLOAK_URL):
             # Continue with the rest of your application logic
             break
         time.sleep(RETRY_INTERVAL)
