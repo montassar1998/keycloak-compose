@@ -115,7 +115,7 @@ def create_users():
 
     print(f"the value of IsImport is {isImportDone}")
     isImportDone=True
-
+    exit(0)
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 if __name__ == "__main__":
