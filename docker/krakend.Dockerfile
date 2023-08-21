@@ -7,6 +7,5 @@ COPY ./docker/krakend.json /etc/krakend/krakend.json
 # Expose KrakenD's default port
 EXPOSE 8000
 
-# Use our entrypoint script
-CMD [ "run", "-c", "/etc/krakend/krakend.json", "-p", "8000" ]
-
+# The default command to run Krakend with the provided configuration
+CMD ["/usr/bin/krakend", "run", "-c", "/etc/krakend/krakend.json", "-d"]
