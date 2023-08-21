@@ -8,8 +8,8 @@
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/auth/{{.env.KC_REALM_NAME}}/*",
-          "host": ["{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}"]
+          "url_pattern": "/auth/master/*",
+          "host": ["keycloak:8080"]
         }
       ]
     }
@@ -17,8 +17,8 @@
   "extra_config": {
     "github.com/devopsfaith/krakend-jose/validator": {
       "alg": "RS256",
-      "jwk-url": "{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}/auth/realms/{{.env.KC_REALM_NAME}}/protocol/openid-connect/certs",
-      "issuer": "{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}/auth/realms/{{.env.KC_REALM_NAME}}"
+      "jwk-url": "keycloak:8080/auth/realms/master/protocol/openid-connect/certs",
+      "issuer": "keycloak:8080/auth/realms/master"
 
   
     }
