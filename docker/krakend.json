@@ -1,32 +1,60 @@
 {
   "version": 3,
-  "name": "Krakend-Keycloak Integration",
+  "name": "My API Gateway",
   "port": 8000,
+  "cache_ttl": "300s",
+  "timeout": "3s",
+  "output_encoding": "json",
   "endpoints": [
     {
-      "endpoint": "/auth/realms/authprovide",
+      "endpoint": "/auth",
+      "method": "POST",
       "output_encoding": "json",
-      "extra_config": {
-        "github.com/devopsfaith/krakend-jose/validator": {
-          "alg": "RS256",
-          "jwk-url": "http://keycloak:8080/auth/realms/authprovide/protocol/openid-connect/certs",
-          "issuer": "http://keycloak:8080/auth/realms/authprovide",
-          "audience": ["grafana"],
-          "roles_key": "realm_access.roles"
-        }
-      },
       "backend": [
         {
-          "url_pattern": "/auth/realms/authprovide",
-          "host": ["http://keycloak:8080"],
-          "whitelist": ["id", "realm", "sslRequired", "enabled", "clients", "users"],
-          "extra_config": {
-            "github.com/devopsfaith/krakend/proxy": {
-              "static": {
-                "strategy": "always"
-              }
-            }
-          }
+          "url_pattern": "/auth/realms/{{.env.KC_REALM_NAME}}/protocol/openid-connect/token",
+          "encoding": "json",
+          "host": ["{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}"],
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/metrics",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/metrics",
+          "encoding": "json",
+          "host": ["localhost:{{.env.PROMETHEUS_PORT}}"],
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/grafana/dashboards",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/api/search",
+          "encoding": "json",
+          "host": ["{{.env.GF_HOSTNAME}}:{{.env.GF_SERVER_HTTP_PORT}}"],
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/valid_users",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/valid_users",
+          "encoding": "json",
+          "host": ["{{.env.VALID_USERS}}"],
+          "method": "GET"
         }
       ]
     }
