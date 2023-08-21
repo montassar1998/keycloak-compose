@@ -9,7 +9,7 @@
       "backend": [
         {
           "url_pattern": "{proxy_path+}",
-          "host": ["keycloak:8080"]
+          "host": ["http://keycloak:8080"]
         }
       ]
     }
@@ -17,8 +17,8 @@
   "extra_config": {
     "github.com/devopsfaith/krakend-jose/validator": {
       "alg": "RS256",
-      "jwk-url": "keycloak:8080/auth/realms/master/protocol/openid-connect/certs",
-      "issuer": "keycloak:8080/auth/realms/master"
+      "jwk-url": "http://keycloak:8080/auth/realms/master/protocol/openid-connect/certs",
+      "issuer": "http://keycloak:8080/auth/realms/master"
     }
   }
 }
