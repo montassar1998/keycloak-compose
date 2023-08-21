@@ -1,68 +1,23 @@
 {
-  "id": "${KC_REALM_NAME}",
-  "realm": "${KC_REALM_NAME}",
-  "sslRequired": "none",
-  "enabled": true,
-  "clients": [
+  "version": 3,
+  "name": "Krakend-Keycloak Integration",
+  "port": 8000,
+  "endpoints": [
     {
-      "id": "grafana",
-      "clientId": "grafana",
-      "name": "grafana",
-      "enabled": true,
-      "publicClient": true,
-      "rootUrl": "${GF_URL}",
-      "adminUrl": "${GF_URL}",
-      "baseUrl": "${GF_URL}",
-      "redirectUris": [
-        "${GF_URL}/*"
-      ],
-      "webOrigins": [
-        "${GF_URL}"
-      ]
-    },
-    {
-      "id": "admin-cli",
-      "clientId": "pyclient",
-      "name": "pyauth",
-      "enabled": true,
-      "publicClient": true,
-      "rootUrl": "${PY_CLIENT_URL}",
-      "adminUrl": "${PY_CLIENT_URL}",
-      "baseUrl": "${PY_CLIENT_URL}",
-      "redirectUris": [
-        "${PY_CLIENT_URL}/*"
-      ],
-      "webOrigins": [
-        "${PY_CLIENT_URL}"
-      ]
-    }
-  ],
-  "users": [
-    {
-      "id": "admin",
-      "email": "${GF_ADMIN_USERNAME}@admin.com",
-      "username": "${GF_ADMIN_USERNAME}",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
-        {
-          "temporary": false,
-          "type": "password",
-          "value": "${GF_ADMIN_PASSWORD}"
+      "endpoint": "/protected",
+      "extra_config": {
+        "github.com/devopsfaith/krakend-jose/validator": {
+          "alg": "RS256",
+          "jwk-url": "http://keycloak:8080/auth/realms/master/protocol/openid-connect/certs",
+          "issuer": "http://keycloak:8080/auth/realms/master",
+          "audience": ["grafana", "pyclient"],
+          "roles_key": "realm_access.roles"
         }
-      ]
-    },
-    {
-      "id": "importer",
-      "email": "${IMPORTER_NAME}@admin.com",
-      "username": "${IMPORTER_NAME}",
-      "enabled": true,
-      "emailVerified": true,
-      "credentials": [
+      },
+      "backend": [
         {
-          "temporary": false,
-          "type": "password",
-          "value": "${IMPORTER_PASSWORD}"
+          "url_pattern": "/",
+          "host": ["http://keycloak:8080"]
         }
       ]
     }
