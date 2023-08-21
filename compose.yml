@@ -213,6 +213,10 @@ services:
         limits:
           memory: 500M
           cpus: '1'
+    environment: 
+      KC_HOSTNAME: http://keycloak
+      KC_PORT: 8080
+      KC_REALM_NAME: master
     logging: *logging
     env_file:
       - .env

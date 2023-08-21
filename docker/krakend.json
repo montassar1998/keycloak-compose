@@ -1,62 +1,26 @@
 {
   "version": 3,
-  "name": "My API Gateway",
+  "name": "Krakend-Keycloak Gateway",
   "port": 8000,
-  "cache_ttl": "300s",
-  "timeout": "3s",
-  "output_encoding": "json",
   "endpoints": [
     {
-      "endpoint": "/auth",
-      "method": "POST",
+      "endpoint": "/auth/*",
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/auth/realms/{{.env.KC_REALM_NAME}}/protocol/openid-connect/token",
-          "encoding": "json",
-          "host": ["{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}"],
-          "method": "POST"
-        }
-      ]
-    },
-    {
-      "endpoint": "/metrics",
-      "method": "GET",
-      "output_encoding": "json",
-      "backend": [
-        {
-          "url_pattern": "/metrics",
-          "encoding": "json",
-          "host": ["localhost:{{.env.PROMETHEUS_PORT}}"],
-          "method": "GET"
-        }
-      ]
-    },
-    {
-      "endpoint": "/grafana/dashboards",
-      "method": "GET",
-      "output_encoding": "json",
-      "backend": [
-        {
-          "url_pattern": "/api/search",
-          "encoding": "json",
-          "host": ["{{.env.GF_HOSTNAME}}:{{.env.GF_SERVER_HTTP_PORT}}"],
-          "method": "GET"
-        }
-      ]
-    },
-    {
-      "endpoint": "/valid_users",
-      "method": "GET",
-      "output_encoding": "json",
-      "backend": [
-        {
-          "url_pattern": "/valid_users",
-          "encoding": "json",
-          "host": ["{{.env.VALID_USERS}}"],
-          "method": "GET"
+          "url_pattern": "/auth/{{.env.KC_REALM_NAME}}/*",
+          "host": ["{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}"]
         }
       ]
     }
-  ]
+  ],
+  "extra_config": {
+    "github.com/devopsfaith/krakend-jose/validator": {
+      "alg": "RS256",
+      "jwk-url": "{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}/auth/realms/{{.env.KC_REALM_NAME}}/protocol/openid-connect/certs",
+      "issuer": "{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}/auth/realms/{{.env.KC_REALM_NAME}}"
+
+  
+    }
+  }
 }
