@@ -1,22 +1,14 @@
 {
   "version": 3,
-  "name": "Krakend-Keycloak Integration",
+  "name": "KrakenD-Keycloak Gateway",
   "port": 8000,
   "endpoints": [
     {
-      "endpoint": "/protected",
-      "extra_config": {
-        "github.com/devopsfaith/krakend-jose/validator": {
-          "alg": "RS256",
-          "jwk-url": "http://keycloak:8080/auth/realms/master/protocol/openid-connect/certs",
-          "issuer": "http://keycloak:8080/auth/realms/master",
-          "audience": ["grafana", "pyclient"],
-          "roles_key": "realm_access.roles"
-        }
-      },
+      "endpoint": "/auth/{proxy_path+}",
+      "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/",
+          "url_pattern": "/{proxy_path+}",
           "host": ["http://keycloak:8080"]
         }
       ]
