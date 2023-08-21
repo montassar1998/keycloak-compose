@@ -14,7 +14,7 @@
         {
           "url_pattern": "/auth/realms/{{.env.KC_REALM_NAME}}/protocol/openid-connect/token",
           "encoding": "json",
-          "host": ["{{.env.KC_HOSTNAME}}:{{.env.KC_PORT}}"],
+          "host": ["keycloak:8080"],
           "method": "POST"
         }
       ]
