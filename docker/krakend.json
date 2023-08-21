@@ -9,7 +9,7 @@
       "output_encoding": "json",
       "backend": [
         {
-          "url_pattern": "/auth/realms/master/protocol/openid-connect/token",
+          "url_pattern": "/realms/master/protocol/openid-connect/token",
           "host": ["http://keycloak:8080"],
           "encoding": "form"
         }
