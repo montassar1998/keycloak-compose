@@ -14,7 +14,6 @@ IMPORTER_ENDPOINT="http://importer:5001"
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 SERVICE_URL = os.getenv("VALID_USERS")
-ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 ALL_USERS_URL = os.getenv("ALL_USERS_URL")
 
