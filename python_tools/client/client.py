@@ -25,6 +25,21 @@ last_access_time = 0
 
 HOSTNAME = socket.gethostname()
 
+total_requests_metric = metrics.counter('total_requests', 'Total number of requests received')
+
+@app.before_request
+def before_request():
+    g.request_start_time = time.time()
+    total_requests_metric.inc()
+
+@app.after_request
+def after_request(response):
+    request_latency = time.time() - g.request_start_time
+    metrics.observe_bucket('request_execution_time', request_latency, labels={'endpoint': request.endpoint})
+    if response.status_code in [400, 404, 500]:
+        error_metric.labels(status_code=response.status_code).inc()
+    return response
+    
 def log_message(priority, message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d')
     request_id = uuid.uuid4()
@@ -85,6 +100,7 @@ def authenticate_users():
     except requests.RequestException as e:
         error_message = f"Error fetching all users: {e}"
         log_message("ERROR", error_message)
+
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
 if __name__ == "__main__":
