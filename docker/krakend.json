@@ -14,6 +14,49 @@
           "encoding": "form"
         }
       ]
+    },
+    {
+      "endpoint": "/auth/authorize",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/realms/master/protocol/openid-connect/auth",
+          "host": ["http://keycloak:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/auth/userinfo",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/realms/master/protocol/openid-connect/userinfo",
+          "host": ["http://keycloak:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/auth/logout",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/realms/master/protocol/openid-connect/logout",
+          "host": ["http://keycloak:8080"]
+        }
+      ]
     }
-  ]
+  ],
+  "extra_config": {
+    "github_com/devopsfaith/krakend-metrics": {
+      "collection_time": "15s",
+      "proxy_disabled": false,
+      "router_disabled": false,
+      "backend_disabled": false,
+      "endpoint_disabled": false,
+      "listen_address": ":8000"
+    }
+  }
 }
