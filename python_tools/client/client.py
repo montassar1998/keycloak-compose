@@ -11,12 +11,6 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 metrics.info('app_info', 'Client application info', version='1.0.3')
 
-# Metrics definitions
-request_execution_time = metrics.histogram('request_execution_time', 'Request execution time')
-rate_limit_metric = metrics.counter('rate_limit_exceeds', 'Rate limit exceeds')
-retries_metric = metrics.counter('authentication_retries', 'Number of retries')
-error_metric = metrics.counter('error_responses', 'Number of error responses')
-total_requests_metric = metrics.counter('total_requests', 'Total number of requests received')
 
 # Configuration and Constants
 KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
@@ -37,9 +31,6 @@ def log_message(priority, message):
     log_format = f"{timestamp}-{HOSTNAME}-{priority}-{request_id}: {message}"
     print(log_format)
 
-@app.before_request
-def before_request():
-    total_requests_metric.inc()
 
 @app.route('/authenticate_users')
 def authenticate_users():
@@ -47,9 +38,8 @@ def authenticate_users():
 
     current_time = time.time()
     if current_time - last_access_time < RATE_LIMIT_SECONDS:
-        rate_limit_metric.inc()
         return jsonify({"message": "Rate limit exceeded"}), 429
-    last_access_time = current_time
+
 
     def is_service_up(url, max_retries=100, retry_interval=2):
         retries = 0
@@ -67,7 +57,6 @@ def authenticate_users():
     if not (is_service_up(KEYCLOAK_URL) and is_service_up(IMPORTER_ENDPOINT)):
         error_message = "Required services are not up"
         log_message("ERROR", error_message)
-        error_metric.labels(status_code=500).inc()
         return jsonify({"message": error_message}), 500
 
     try:
@@ -90,14 +79,12 @@ def authenticate_users():
                 authenticated_count += 1
             else:
                 retries += 1
-                retries_metric.inc()
                 log_message("WARNING", f"Authentication failed for user {user['username']}")
 
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
     except requests.RequestException as e:
         error_message = f"Error fetching all users: {e}"
         log_message("ERROR", error_message)
-        error_metric.labels(status_code=500).inc()
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
 if __name__ == "__main__":
