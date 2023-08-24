@@ -57,6 +57,20 @@
       "backend_disabled": false,
       "endpoint_disabled": false,
       "listen_address": ":8090"
+    },
+    "telemetry/opencensus": {
+      "sample_rate": 10,
+      "reporting_period": 0,
+      "exporters": {
+        "prometheus": {
+            "port": 8091,
+            "namespace": "krakend",
+            "tag_host": false,
+            "tag_path": true,
+            "tag_method": true,
+            "tag_statuscode": false
+        }
     }
+  }
   }
 }
