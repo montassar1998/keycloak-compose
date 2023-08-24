@@ -1,0 +1,21 @@
+groups:
+- name: generic_alerts
+  rules:
+  - alert: HighErrorRate
+    expr: (rate(error_responses_total{job="pyclient"}[5m]) / rate(total_requests_total{job="pyclient"}[5m]) > 0.01) or
+          (rate(error_responses_total{job="client_generator"}[5m]) / rate(total_requests_total{job="client_generator"}[5m]) > 0.01) or
+          (rate(error_responses_total{job="importer"}[5m]) / rate(total_requests_total{job="importer"}[5m]) > 0.01)
+    for: 1m
+    annotations:
+      description: The error rate is above 1%.
+
+  - alert: HighTotalRequestsRate
+    expr: rate(total_requests_total{job="pyclient"}[1m]) > 500 or
+          rate(total_requests_total{job="client_generator"}[1m]) > 500 or
+          rate(total_requests_total{job="importer"}[1m]) > 500
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      title: "High Total Requests Rate"
+      description: "The rate of total requests has exceeded 500rps over the last minute, indicating potential capacity and scalability limits."

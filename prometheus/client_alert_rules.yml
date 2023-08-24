@@ -1,0 +1,29 @@
+groups:
+- name: pyclient_alerts
+  rules:
+  - alert: HighExecutionTime
+    expr: histogram_quantile(0.95, sum(rate(request_execution_time_bucket{job="pyclient"}[5m])) by (le)) > 1
+    for: 1m
+    annotations:
+      description: The 95th percentile of request execution time is above 1 second.
+
+  - alert: RateLimitExceeded
+    expr: rate(rate_limit_exceeds_total{job="pyclient"}[1m]) > 1
+    for: 1m
+    annotations:
+      description: Rate limit exceeded more than once per second.
+
+  - alert: HighAuthenticationRetries
+    expr: rate(authentication_retries_total{job="pyclient"}[1m]) > 3
+    for: 1m
+    annotations:
+      description: More than 3 authentication retries per minute.
+
+  - alert: HighTotalRequestsRate
+    expr: rate(total_requests_total{job="pyclient"}[1m]) > 500
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      title: "High Total Requests Rate"
+      description: "The rate of total requests has exceeded 500rps over the last minute, indicating potential capacity and scalability limits."

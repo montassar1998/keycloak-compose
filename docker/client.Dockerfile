@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./python_tools/client/* /app
 
 # Install necessary dependencies
-RUN pip install --upgrade --no-cache-dir requests flask 
+RUN pip install --upgrade --no-cache-dir requests flask prometheus_flask_exporter
 EXPOSE 5002
 # Set the command to run the client script by default
 CMD ["python", "./client.py"]

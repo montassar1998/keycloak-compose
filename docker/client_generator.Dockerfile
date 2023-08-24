@@ -8,7 +8,7 @@ WORKDIR /app
 COPY ./python_tools/client_generator/* /app
 
 # Install the required dependencies
-RUN pip install --no-cache-dir Flask faker
+RUN pip install --no-cache-dir Flask faker prometheus_flask_exporter
 
 # Expose the port the app runs on
 EXPOSE 5000

@@ -1,9 +1,17 @@
 import requests
 from flask import Flask, jsonify
-import os 
+import os
 import time
 import socket
 import threading
+import datetime
+from prometheus_flask_exporter import PrometheusMetrics
+
+
+
+def log_message(message):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"[{timestamp} - {hostname}] {message}")
 
 
 hostname = socket.gethostname()
@@ -14,15 +22,21 @@ REALM = "master"
 CLIENT_ID = "admin-cli"
 USERNAME = "admin"
 PASSWORD = "keycloak"
-isImportDone=False
+isImportDone = False
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 SERVICE_URL = os.getenv("VALID_USERS")
 ADMIN_API_URL = f"{KEYCLOAK_URL}/admin/realms/{REALM}/users"
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 
-
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
+
+# Metrics definition
+total_requests_metric = metrics.counter('importer_total_requests', 'Total number of requests received by the importer')
+error_responses_metric = metrics.counter('importer_error_responses', 'Number of error responses by the importer')
+
+
 def get_admin_access_token():
     data = {
         "grant_type": "password",
@@ -36,17 +50,20 @@ def get_admin_access_token():
     else:
         return None
 
+
 MAX_RETRIES = 100
 RETRY_INTERVAL = 1  # seconds
+
 
 def is_keycloak_up():
     try:
         response = requests.get(KEYCLOAK_URL)
-        print(f"Importer Caught Keycloak Up ************************************\n")
+        log_message("Importer Caught Keycloak Up")
         response.raise_for_status()
         return True
     except requests.RequestException:
         return False
+
 
 retries = 0
 while retries < MAX_RETRIES:
@@ -56,14 +73,16 @@ while retries < MAX_RETRIES:
     time.sleep(RETRY_INTERVAL)
     retries += 1
 else:
-    print("Keycloak is still not up after several retries. Exiting...")
+    log_message("Keycloak is still not up after several retries. Exiting...")
     exit(1)
+
+
 
 def create_keycloak_user(username, password):
     admin_token = get_admin_access_token()
 
     if not admin_token:
-        print("Failed to retrieve admin access token")
+        log_message("Failed to retrieve admin access token")
         return False
 
     headers = {
@@ -82,27 +101,32 @@ def create_keycloak_user(username, password):
     }
 
     response = requests.post(ADMIN_API_URL, headers=headers, json=user_data)
-    
+
     if response.status_code in [200, 201]:
-        #print(f"user {username} with password: {password} Created Successfully! {hostname}")
         return True
     else:
-        #print(f"Error in isnerter function : {response.status_code}  {hostname}")
         return False
+
+
 @app.route('/importstatus')
 def Alive():
+    total_requests_metric.inc()
     if isImportDone:
         return jsonify(status="Import completed"), 200
     else:
         return jsonify(status="Import in progress"), 202
+
+
 @app.route('/create_users')
 def create_users():
+    total_requests_metric.inc()
     global isImportDone
     isImportDone = False
     # Fetch valid_users from the generator
     response = requests.get(SERVICE_URL)
     if response.status_code != 200:
-        print(f"the error content from the response {response.content}")
+        error_responses_metric.inc() 
+        log_message(f"Error content from the response: {response.content}")
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
 
     valid_users = response.json()
@@ -113,20 +137,23 @@ def create_users():
         password = user['password']
         if create_keycloak_user(username, password):
             users_created += 1
-            print(f"Created {users_created}: {user} users in Keycloak")
+            log_message(f"Created user {username} in Keycloak. Total: {users_created}")
         else:
-            print(f"error when {user} in Keycloak")
+            log_message(f"Error creating user {username} in Keycloak")
 
-    print(f"the value of IsImport is {isImportDone}")
-    isImportDone=True
+    log_message(f"Is Import Done: {isImportDone}")
+    isImportDone = True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
+
+
 def call_create_users_once_started():
-    time.sleep(15)  # Give the Flask server a few seconds to ensure it's up
+    time.sleep(15)  
     try:
         response = requests.get("http://0.0.0.0:5001/create_users")
-        print(f"Self-call response: {response.status_code}")
+        log_message(f"Self-call response: {response.status_code}")
     except Exception as e:
-        print(f"Failed self-call to /create_users: {e}")
+        log_message(f"Failed self-call to /create_users: {e}")
+
 
 if __name__ == "__main__":
     threading.Thread(target=call_create_users_once_started).start()

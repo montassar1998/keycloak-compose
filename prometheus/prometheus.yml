@@ -3,6 +3,10 @@ global:
   scrape_timeout: 10s
   evaluation_interval: 15s
 
+rule_files:
+  - "client_alert_rules.yml"
+  - "genertic_rules.yml"
+
 scrape_configs:
   - job_name: prometheus
     metrics_path: /metrics
@@ -17,3 +21,19 @@ scrape_configs:
   - job_name: 'krakend'
     static_configs:
     - targets: ['krakend:8091']
+  
+  - job_name: 'pyclient'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['pyclient:5002']
+
+  - job_name: 'client_generator'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['client_generator:5000']
+
+  - job_name: 'importer'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['importer:5001']
+

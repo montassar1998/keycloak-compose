@@ -1,70 +1,74 @@
 import requests
-from flask import Flask, jsonify
-import os 
+from flask import Flask, jsonify, request, g
+import os
 import time
-
-GENERATOR_NAME = os.getenv("GENERATOR_NAME")
-# Define Keycloak parameters
-KEYCLOAK_URL = "http://keycloak:8080"
-REALM = "master"
-CLIENT_ID = "admin-cli"
-USERNAME = "admin"
-PASSWORD = "keycloak"
-IMPORTER_ENDPOINT="http://importer:5001"
-# URL for the token endpoint
-token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-SERVICE_URL = os.getenv("VALID_USERS")
-ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-ALL_USERS_URL = os.getenv("ALL_USERS_URL")
+import datetime
+import socket
+import uuid
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
+metrics.info('app_info', 'Client application info', version='1.0.3')
 
+# Metrics definitions
+request_execution_time = metrics.histogram('request_execution_time', 'Request execution time')
+rate_limit_metric = metrics.counter('rate_limit_exceeds', 'Rate limit exceeds')
+retries_metric = metrics.counter('authentication_retries', 'Number of retries')
+error_metric = metrics.counter('error_responses', 'Number of error responses')
+total_requests_metric = metrics.counter('total_requests', 'Total number of requests received')
 
+# Configuration and Constants
+KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
+REALM = "master"
+CLIENT_ID = "admin-cli"
+IMPORTER_ENDPOINT = os.getenv("IMPORTER_ENDPOINT", "http://importer:5001")
+ALL_USERS_URL = os.getenv("ALL_USERS_URL")
+ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
+RATE_LIMIT_SECONDS = 1
 
-def authenticate_user(username, password):
-    data = {
-        "grant_type": "password",
-        "client_id": CLIENT_ID,
-        "username": username,
-        "password": password
-    }
+last_access_time = 0
 
-    # Send authentication request
-    response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=data)
-    
-    if response.status_code == 200:
-        print(f"User {username} Authenticated Successfully!")
-        return True
-    else:
-        print(f"Authentication failed for user {username}: {response.status_code}")
-        return False
+HOSTNAME = socket.gethostname()
+
+def log_message(priority, message):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d')
+    request_id = uuid.uuid4()
+    log_format = f"{timestamp}-{HOSTNAME}-{priority}-{request_id}: {message}"
+    print(log_format)
+
+@app.before_request
+def before_request():
+    total_requests_metric.inc()
 
 @app.route('/authenticate_users')
 def authenticate_users():
-    MAX_RETRIES = 100
-    RETRY_INTERVAL = 2  # seconds
-    def is_up(url):
-        try:
-            response = requests.get(url)
-            if response.status_code == 202:
-                return False
-            response.raise_for_status()
-            print(f"Client Caught {url} Up ************************************\n")
-            return True
-        except requests.RequestException:
-            return False
-    retries = 0
-    while retries < MAX_RETRIES:
-        if is_up(KEYCLOAK_URL) and is_up(f"{IMPORTER_ENDPOINT}/importstatus"):
-            # Continue with the rest of your application logic
-            
-            break
-        else:
-            print("Client is not Ready yet ")
-        time.sleep(RETRY_INTERVAL)
-        retries += 1
-    else:
-        print("Keycloak is still not up after several retries. Exiting...")
+    global last_access_time
+
+    current_time = time.time()
+    if current_time - last_access_time < RATE_LIMIT_SECONDS:
+        rate_limit_metric.inc()
+        return jsonify({"message": "Rate limit exceeded"}), 429
+    last_access_time = current_time
+
+    def is_service_up(url, max_retries=100, retry_interval=2):
+        retries = 0
+        while retries < max_retries:
+            try:
+                response = requests.get(url)
+                if response.status_code == 200:
+                    return True
+            except requests.RequestException:
+                pass
+            retries += 1
+            time.sleep(retry_interval)
+        return False
+
+    if not (is_service_up(KEYCLOAK_URL) and is_service_up(IMPORTER_ENDPOINT)):
+        error_message = "Required services are not up"
+        log_message("ERROR", error_message)
+        error_metric.labels(status_code=500).inc()
+        return jsonify({"message": error_message}), 500
 
     try:
         response = requests.get(ALL_USERS_URL)
@@ -72,17 +76,29 @@ def authenticate_users():
 
         all_users = response.json()
         authenticated_count = 0
+        retries = 0
 
         for user in all_users:
-            if authenticate_user(user['username'], user['password']):
+            auth_data = {
+                "grant_type": "password",
+                "client_id": CLIENT_ID,
+                "username": user['username'],
+                "password": user['password']
+            }
+            auth_response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=auth_data)
+            if auth_response.status_code == 200:
                 authenticated_count += 1
+            else:
+                retries += 1
+                retries_metric.inc()
+                log_message("WARNING", f"Authentication failed for user {user['username']}")
 
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
     except requests.RequestException as e:
-        print(f"Error fetching all users: {e}")
+        error_message = f"Error fetching all users: {e}"
+        log_message("ERROR", error_message)
+        error_metric.labels(status_code=500).inc()
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
 if __name__ == "__main__":
-    with app.app_context(): 
-        authenticate_users()
     app.run(host='0.0.0.0', debug=True, port=5002)
