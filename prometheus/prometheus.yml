@@ -17,4 +17,4 @@ scrape_configs:
   - job_name: 'krakend'
     metrics_path: '/__debug/metrics'
     static_configs:
-    - targets: ['krakend:8090']
+    - targets: ['krakend:8091']
