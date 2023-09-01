@@ -33,10 +33,8 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 metrics.info('app_info', 'Client application info', version='1.0.3')
 
-# Create a counter metric for total requests
-total_requests_metric = metrics.counter(
-    'total_requests', 'Total number of requests', labels={'app': 'importer'}
-)
+
+total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={'endpoint': lambda: request.endpoint})
 
 
 def get_admin_access_token():
