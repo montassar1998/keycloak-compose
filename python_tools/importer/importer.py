@@ -32,10 +32,10 @@ ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 
-# Metrics definition
-total_requests_metric = metrics.counter('importer_total_requests', 'Total number of requests received by the importer')
-error_responses_metric = metrics.counter('importer_error_responses', 'Number of error responses by the importer')
-
+# Create a counter metric for total requests
+total_requests_metric = metrics.counter(
+    'total_requests', 'Total number of requests', labels={'app': 'importer'}
+)
 
 def get_admin_access_token():
     data = {
@@ -110,7 +110,9 @@ def create_keycloak_user(username, password):
 
 @app.route('/importstatus')
 def Alive():
+    # Increment the total requests metric when this endpoint is accessed
     total_requests_metric.inc()
+
     if isImportDone:
         return jsonify(status="Import completed"), 200
     else:
@@ -119,13 +121,15 @@ def Alive():
 
 @app.route('/create_users')
 def create_users():
+
     total_requests_metric.inc()
+ 
     global isImportDone
     isImportDone = False
     # Fetch valid_users from the generator
     response = requests.get(SERVICE_URL)
     if response.status_code != 200:
-        error_responses_metric.inc() 
+        
         log_message(f"Error content from the response: {response.content}")
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
 
