@@ -26,6 +26,11 @@ last_access_time = 0
 HOSTNAME = socket.gethostname()
 
 
+# Define a histogram metric to measure per-request execution time
+request_duration_metric = metrics.histogram(
+    'request_duration_seconds', 'Request duration in seconds', labels={'endpoint': lambda: request.endpoint}
+)
+
 
 @app.before_request
 def before_request():
@@ -35,11 +40,10 @@ def before_request():
 @app.after_request
 def after_request(response):
     request_latency = time.time() - g.request_start_time
-    metrics.histogram('request_duration_seconds', 'Request duration in seconds', labels={'endpoint': request.endpoint}, buckets=[0.1, 0.2, 0.5, 1, 2, 5]).observe(request_latency)
-
-    if response.status_code in [400, 404, 500]:
-        metrics.counter('error_responses', 'Number of error responses', labels={'status_code': response.status_code}).inc()
-
+    
+    # Record the request duration in the histogram metric
+    request_duration_metric.observe(request_latency)
+    
     return response
 
     
