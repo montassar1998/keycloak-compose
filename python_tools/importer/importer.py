@@ -8,7 +8,6 @@ import datetime
 from prometheus_flask_exporter import PrometheusMetrics
 
 
-
 def log_message(message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"[{timestamp} - {hostname}] {message}")
@@ -33,7 +32,8 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 metrics.info('app_info', 'Client application info', version='1.0.3')
 
-total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={'endpoint': lambda: request.endpoint})
+total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={
+                                        'endpoint': lambda: request.endpoint})
 
 
 def get_admin_access_token():
@@ -74,7 +74,6 @@ while retries < MAX_RETRIES:
 else:
     log_message("Keycloak is still not up after several retries. Exiting...")
     exit(1)
-
 
 
 def create_keycloak_user(username, password):
@@ -121,13 +120,13 @@ def Alive():
 @app.route('/create_users')
 def create_users():
     total_requests_metric.inc()
- 
+
     global isImportDone
     isImportDone = False
     # Fetch valid_users from the generator
     response = requests.get(SERVICE_URL)
     if response.status_code != 200:
-        
+
         log_message(f"Error content from the response: {response.content}")
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
 
@@ -139,14 +138,14 @@ def create_users():
         password = user['password']
         if create_keycloak_user(username, password):
             users_created += 1
-            log_message(f"Created user {username} in Keycloak. Total: {users_created}")
+            log_message(
+                f"Created user {username} in Keycloak. Total: {users_created}")
         else:
             log_message(f"Error creating user {username} in Keycloak")
 
     log_message(f"Is Import Done: {isImportDone}")
     isImportDone = True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
-
 
 
 # Create a flag to track whether the initialization has occurred
@@ -161,8 +160,11 @@ def initialize_app():
             create_users()
         initialized = True
 
+
 def main():
     with app.app_context():
         initialize_app
+
+
 if __name__ == "__main__":
     main()

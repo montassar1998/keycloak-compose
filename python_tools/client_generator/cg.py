@@ -20,13 +20,16 @@ metrics = PrometheusMetrics(app)
 
 
 # Metrics definition
-total_requests_metric = metrics.counter('total_requests', 'Total number of requests received')
-error_responses_metric = metrics.counter('error_responses', 'Number of error responses')
+total_requests_metric = metrics.counter(
+    'total_requests', 'Total number of requests received')
+error_responses_metric = metrics.counter(
+    'error_responses', 'Number of error responses')
 
 
 def generate_id(prefix="RQ"):
     """Generate a unique ID based on current timestamp."""
     return prefix + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
+
 
 def log_message(priority, message):
     if 'ORDER_ID' not in g:
@@ -36,6 +39,7 @@ def log_message(priority, message):
     msg_id = generate_id("MSG")
     log_format = f"{timestamp}-{HOSTNAME}-{SCRIPT_NAME}.v{SCRIPT_VERSION}-{priority}-{request_id}.{msg_id}-{g.ORDER_ID}: {message}"
     print(log_format)
+
 
 @app.route('/all_users')
 def all_users():
@@ -49,6 +53,7 @@ def all_users():
         log_message("ERROR", f"Error fetching all users: {e}")
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
+
 @app.route('/valid_users')
 def valid_users():
     try:
@@ -57,8 +62,9 @@ def valid_users():
         return jsonify(data)
     except Exception as e:
         log_message("ERROR", f"Error fetching valid users: {e}")
-        error_responses_metric.inc() 
+        error_responses_metric.inc()
         return jsonify({"message": "Failed to fetch valid users", "error": str(e)}), 500
+
 
 def generate_user():
     return {
@@ -67,6 +73,7 @@ def generate_user():
         "password": fake.password(),
         "grant_type": "password"
     }
+
 
 def main():
 
@@ -87,7 +94,7 @@ def main():
             # Save valid users
             with open('valid_users.json', 'w') as f:
                 json.dump(valid_users, f, indent=4)
-        
+
             log_message("INFO", "Saved valid users data.")
 
         except Exception as e:
@@ -96,6 +103,7 @@ def main():
         # Run Flask app
         log_message("INFO", "Starting Flask app...")
         app.run(host='0.0.0.0', debug=True, port=5000)
+
 
 if __name__ == "__main__":
     main()
