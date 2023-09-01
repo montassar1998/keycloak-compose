@@ -39,6 +39,10 @@ rate_limit_metric = metrics.counter('rate_limit', 'Rate Limit Exceeded', labels=
 global_retry_metric = metrics.counter('global_retries', 'Number of global retries', labels={'endpoint': lambda: request.endpoint})
 
 
+# Define a counter metric for network errors
+network_error_metric = metrics.counter(
+    'network_errors', 'Number of network errors', labels={'endpoint': lambda: request.endpoint}
+)
     
 def log_message(priority, message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -64,11 +68,20 @@ def authenticate_user():
         else:
             # Increment the global retry metric when a retry occurs
             global_retry_metric.inc()
+            
+            # Increment the network error metric for 4xx and 5xx responses
+            if 400 <= response.status_code < 600:
+                network_error_metric.inc()
+            
             log_message("WARNING", "Authentication failed")
             return jsonify({"message": "Authentication failed"}), 401
     except requests.RequestException as e:
         # Increment the global retry metric when a retry occurs due to an exception
         global_retry_metric.inc()
+        
+        # Increment the network error metric for exceptions
+        network_error_metric.inc()
+        
         log_message("ERROR", f"Error during authentication: {e}")
         return jsonify({"message": "Error during authentication"}), 500
 
@@ -81,7 +94,6 @@ def authenticate_users():
     if current_time - last_access_time < 1.0 / RATE_LIMIT:
         rate_limit_metric.inc()
         return jsonify({"message": "Rate limit exceeded"}), 429
-
 
     def is_service_up(url, max_retries=100, retry_interval=2):
         retries = 0
@@ -121,12 +133,23 @@ def authenticate_users():
                     authenticated_count += 1
                 else:
                     global_retry_metric.inc()
+                    
+                    # Increment the network error metric for 4xx and 5xx responses
+                    if 400 <= auth_response.status_code < 600:
+                        network_error_metric.inc()
+                    
                     log_message("WARNING", f"Authentication failed for user {user['username']}")
 
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
     except requests.RequestException as e:
         error_message = f"Error fetching all users: {e}"
         log_message("ERROR", error_message)
+        
+        # Increment the global retry metric when a retry occurs due to an exception
+        global_retry_metric.inc()
+        
+        # Increment the network error metric for exceptions
+        network_error_metric.inc()
 
         return jsonify({"message": "Failed to fetch all users", "error": str(e)}), 500
 
