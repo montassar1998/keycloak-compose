@@ -25,19 +25,23 @@ last_access_time = 0
 
 HOSTNAME = socket.gethostname()
 
-total_requests_counter = metrics.counter('total_requests', 'Total number of requests received')
+
+total_requests_counter = metrics.counter(
+    'total_requests', 'Total number of requests received',
+    labels={'endpoint': lambda: request.endpoint}
+)
 
 @app.before_request
 def before_request():
     g.request_start_time = time.time()
-    total_requests_counter.inc()
 
 @app.after_request
 def after_request(response):
     request_latency = time.time() - g.request_start_time
-    metrics.observe_bucket('request_execution_time', request_latency, labels={'endpoint': request.endpoint})
+    metrics.observe('request_execution_time', request_latency)
     if response.status_code in [400, 404, 500]:
-        error_metric.labels(status_code=response.status_code).inc()
+        metrics.counter('error_responses', 'Number of error responses',
+                        labels={'status_code': response.status_code}).inc()
     return response
     
 def log_message(priority, message):
