@@ -20,6 +20,7 @@ IMPORTER_ENDPOINT = os.getenv("IMPORTER_ENDPOINT", "http://importer:5001")
 ALL_USERS_URL = os.getenv("ALL_USERS_URL")
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
 RATE_LIMIT_SECONDS = 1
+RATE_LIMIT = int(os.getenv("RATE_LIMIT", 500))
 
 last_access_time = 0
 
@@ -30,6 +31,9 @@ HOSTNAME = socket.gethostname()
 request_duration_metric = metrics.summary(
     'request_duration_seconds', 'Request duration in seconds', labels={'endpoint': lambda: request.endpoint}
 )
+
+# Define a counter metric to measure the rate limit
+rate_limit_metric = metrics.counter('rate_limit', 'Rate Limit Exceeded', labels={'endpoint': lambda: request.endpoint})
 
 
 
@@ -45,9 +49,10 @@ def log_message(priority, message):
 def authenticate_users():
     global last_access_time
 
-    #current_time = time.time()
-    #if current_time - last_access_time < RATE_LIMIT_SECONDS:
-    #    return jsonify({"message": "Rate limit exceeded"}), 429
+    current_time = time.time()
+    if current_time - last_access_time < 1.0 / RATE_LIMIT:
+        rate_limit_metric.inc()
+        return jsonify({"message": "Rate limit exceeded"}), 429
 
 
     def is_service_up(url, max_retries=100, retry_interval=2):

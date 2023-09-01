@@ -136,7 +136,7 @@ services:
       USERNAME: admin
       USER_PASSWORD: keycloak
       ALL_USERS_URL: http://client_generator:5000/all_users
-      
+      RATE_LIMIT: ${RATE_LIMIT}
     depends_on:
       - importer
     restart: on-failure
