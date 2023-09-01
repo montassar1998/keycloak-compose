@@ -149,12 +149,18 @@ def create_users():
 
 
 
-# Run create_users before the first request
-@app.before_first_request
-def run_create_users():
-    with app.app_context():
-        # You can put any initialization code here that you want to run before handling the first request.
-        create_users()
+# Create a flag to track whether the initialization has occurred
+initialized = False
+
+# Function to initialize the application (create users)
+def initialize_app():
+    global initialized
+    if not initialized:
+        with app.app_context():
+            create_users()
+        initialized = True
 
 if __name__ == "__main__":
+    # Initialize the app (create users) when the application starts
+    initialize_app()
     app.run(host='0.0.0.0', debug=True, port=5001)
