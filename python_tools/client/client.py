@@ -25,7 +25,7 @@ last_access_time = 0
 
 HOSTNAME = socket.gethostname()
 
-total_requests_metric = metrics.counter('total_requests', 'Total number of requests received')
+total_requests_counter = metrics.counter('total_requests', 'Total number of requests received')
 
 @app.before_request
 def before_request():
