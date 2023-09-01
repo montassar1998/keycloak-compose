@@ -35,6 +35,8 @@ request_duration_metric = metrics.summary(
 # Define a counter metric to measure the rate limit
 rate_limit_metric = metrics.counter('rate_limit', 'Rate Limit Exceeded', labels={'endpoint': lambda: request.endpoint})
 
+# Global retry metric
+global_retry_metric = metrics.counter('global_retries', 'Number of global retries', labels={'endpoint': lambda: request.endpoint})
 
 
     
@@ -43,6 +45,32 @@ def log_message(priority, message):
     request_id = uuid.uuid4()
     log_format = f"{timestamp}-{HOSTNAME}-{priority}-{request_id}: {message}"
     print(log_format)
+
+
+
+@app.route('/authenticate_single_user', methods=['POST'])
+def authenticate_user():
+    user_data = request.json
+
+    # Check if all required fields are present in the user_data
+    required_fields = ["grant_type", "client_id", "username", "password"]
+    if not all(field in user_data for field in required_fields):
+        return jsonify({"message": "Missing required fields"}), 400
+
+    try:
+        response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=user_data)
+        if response.status_code == 200:
+            return jsonify({"message": "Authentication successful"}), 200
+        else:
+            # Increment the global retry metric when a retry occurs
+            global_retry_metric.inc()
+            log_message("WARNING", "Authentication failed")
+            return jsonify({"message": "Authentication failed"}), 401
+    except requests.RequestException as e:
+        # Increment the global retry metric when a retry occurs due to an exception
+        global_retry_metric.inc()
+        log_message("ERROR", f"Error during authentication: {e}")
+        return jsonify({"message": "Error during authentication"}), 500
 
 
 @app.route('/authenticate_users')
@@ -79,7 +107,6 @@ def authenticate_users():
 
         all_users = response.json()
         authenticated_count = 0
-        retries = 0
 
         for user in all_users:
             with request_duration_metric.time():
@@ -93,7 +120,7 @@ def authenticate_users():
                 if auth_response.status_code == 200:
                     authenticated_count += 1
                 else:
-                    retries += 1
+                    global_retry_metric.inc()
                     log_message("WARNING", f"Authentication failed for user {user['username']}")
 
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
