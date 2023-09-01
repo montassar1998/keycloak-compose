@@ -93,9 +93,9 @@ def main():
         except Exception as e:
             log_message("ERROR", f"Error saving users data: {e}")
 
-    # Run Flask app
-    log_message("INFO", "Starting Flask app...")
-    app.run(host='0.0.0.0', debug=True, port=5000)
+        # Run Flask app
+        log_message("INFO", "Starting Flask app...")
+        app.run(host='0.0.0.0', debug=True, port=5000)
 
 if __name__ == "__main__":
     main()
