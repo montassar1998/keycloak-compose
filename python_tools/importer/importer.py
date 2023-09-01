@@ -33,7 +33,6 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 metrics.info('app_info', 'Client application info', version='1.0.3')
 
-
 total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={'endpoint': lambda: request.endpoint})
 
 
@@ -121,7 +120,6 @@ def Alive():
 
 @app.route('/create_users')
 def create_users():
-
     total_requests_metric.inc()
  
     global isImportDone
