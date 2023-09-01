@@ -165,7 +165,6 @@ services:
           cpus: '1'
     ports:
       - 5001:5001
-    logging: *logging
     restart: on-failure
 
   grafana:

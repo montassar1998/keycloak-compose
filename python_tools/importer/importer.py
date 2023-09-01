@@ -152,6 +152,7 @@ def create_users():
 # Create a flag to track whether the initialization has occurred
 initialized = False
 
+
 # Function to initialize the application (create users)
 def initialize_app():
     global initialized
@@ -160,7 +161,8 @@ def initialize_app():
             create_users()
         initialized = True
 
+def main():
+    with app.app_context():
+        initialize_app
 if __name__ == "__main__":
-    # Initialize the app (create users) when the application starts
-    initialize_app()
-    app.run(host='0.0.0.0', debug=True, port=5001)
+    main()
