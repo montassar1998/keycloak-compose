@@ -148,15 +148,13 @@ def create_users():
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
 
-def call_create_users_once_started():
-    time.sleep(15)  
-    try:
-        response = requests.get("http://0.0.0.0:5001/create_users")
-        log_message(f"Self-call response: {response.status_code}")
-    except Exception as e:
-        log_message(f"Failed self-call to /create_users: {e}")
 
+# Run create_users before the first request
+@app.before_first_request
+def run_create_users():
+    with app.app_context():
+        # You can put any initialization code here that you want to run before handling the first request.
+        create_users()
 
 if __name__ == "__main__":
-    threading.Thread(target=call_create_users_once_started).start()
     app.run(host='0.0.0.0', debug=True, port=5001)
