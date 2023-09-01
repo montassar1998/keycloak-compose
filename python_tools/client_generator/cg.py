@@ -69,9 +69,9 @@ def generate_user():
     }
 
 def main():
-    log_message("INFO", "Generating user data...")
 
     with app.app_context():
+        log_message("INFO", "Generating user data...")
         users = [generate_user() for _ in range(1000)]
 
         try:
