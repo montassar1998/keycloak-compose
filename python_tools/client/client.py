@@ -43,6 +43,10 @@ global_retry_metric = metrics.counter('global_retries', 'Number of global retrie
 network_error_metric = metrics.counter(
     'network_errors', 'Number of network errors', labels={'endpoint': lambda: request.endpoint}
 )
+
+# Define a counter metric to measure the total number of requests
+total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={'endpoint': lambda: request.endpoint})
+
     
 def log_message(priority, message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -54,6 +58,9 @@ def log_message(priority, message):
 
 @app.route('/authenticate_single_user', methods=['POST'])
 def authenticate_user():
+    # Increment the total_requests metric for each request
+    total_requests_metric.inc()
+
     user_data = request.json
 
     # Check if all required fields are present in the user_data
@@ -89,7 +96,8 @@ def authenticate_user():
 @app.route('/authenticate_users')
 def authenticate_users():
     global last_access_time
-
+    total_requests_metric.inc()
+    
     current_time = time.time()
     if current_time - last_access_time < 1.0 / RATE_LIMIT:
         rate_limit_metric.inc()
