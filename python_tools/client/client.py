@@ -35,12 +35,13 @@ def before_request():
 @app.after_request
 def after_request(response):
     request_latency = time.time() - g.request_start_time
-    metrics.histogram('request_duration_seconds', 'Request duration in seconds', labels={'endpoint': request.endpoint}).observe(request_latency)
+    metrics.histogram('request_duration_seconds', 'Request duration in seconds', labels={'endpoint': request.endpoint}, buckets=[0.1, 0.2, 0.5, 1, 2, 5]).observe(request_latency)
 
     if response.status_code in [400, 404, 500]:
         metrics.counter('error_responses', 'Number of error responses', labels={'status_code': response.status_code}).inc()
 
     return response
+
     
 def log_message(priority, message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d')
