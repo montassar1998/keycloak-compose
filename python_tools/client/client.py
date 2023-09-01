@@ -26,25 +26,12 @@ last_access_time = 0
 HOSTNAME = socket.gethostname()
 
 
-# Define a histogram metric to measure per-request execution time
-request_duration_metric = metrics.histogram(
+# Define a summary metric to measure per-request execution time
+request_duration_metric = metrics.summary(
     'request_duration_seconds', 'Request duration in seconds', labels={'endpoint': lambda: request.endpoint}
 )
 
 
-@app.before_request
-def before_request():
-    g.request_start_time = time.time()
-    
-
-@app.after_request
-def after_request(response):
-    request_latency = time.time() - g.request_start_time
-    
-    # Record the request duration in the histogram metric
-    request_duration_metric.observe(request_latency)
-    
-    return response
 
     
 def log_message(priority, message):
@@ -58,9 +45,9 @@ def log_message(priority, message):
 def authenticate_users():
     global last_access_time
 
-    current_time = time.time()
-    if current_time - last_access_time < RATE_LIMIT_SECONDS:
-        return jsonify({"message": "Rate limit exceeded"}), 429
+    #current_time = time.time()
+    #if current_time - last_access_time < RATE_LIMIT_SECONDS:
+    #    return jsonify({"message": "Rate limit exceeded"}), 429
 
 
     def is_service_up(url, max_retries=100, retry_interval=2):
@@ -90,18 +77,19 @@ def authenticate_users():
         retries = 0
 
         for user in all_users:
-            auth_data = {
-                "grant_type": "password",
-                "client_id": CLIENT_ID,
-                "username": user['username'],
-                "password": user['password']
-            }
-            auth_response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=auth_data)
-            if auth_response.status_code == 200:
-                authenticated_count += 1
-            else:
-                retries += 1
-                log_message("WARNING", f"Authentication failed for user {user['username']}")
+            with request_duration_metric.time():
+                auth_data = {
+                    "grant_type": "password",
+                    "client_id": CLIENT_ID,
+                    "username": user['username'],
+                    "password": user['password']
+                }
+                auth_response = requests.post(ADMIN_ACCESS_TOKEN_URL, data=auth_data)
+                if auth_response.status_code == 200:
+                    authenticated_count += 1
+                else:
+                    retries += 1
+                    log_message("WARNING", f"Authentication failed for user {user['username']}")
 
         return jsonify({"message": f"Authenticated {authenticated_count} out of {len(all_users)} users."})
     except requests.RequestException as e:
