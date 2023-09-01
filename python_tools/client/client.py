@@ -30,7 +30,7 @@ total_requests_counter = metrics.counter('total_requests', 'Total number of requ
 @app.before_request
 def before_request():
     g.request_start_time = time.time()
-    total_requests_metric.inc()
+    total_requests_counter.inc()
 
 @app.after_request
 def after_request(response):
