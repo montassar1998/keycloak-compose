@@ -172,14 +172,15 @@ def initialize_app():
     if not initialized:
         with app.app_context():
             create_users()
-        initialized = True
+            initialized = True
+            app.run(host='0.0.0.0', debug=True, port=5001)
 
 
     
 def main():
     with app.app_context():
         initialize_app
-        app.run(host='0.0.0.0', debug=True, port=5001)
+        
 
 
 if __name__ == "__main__":
