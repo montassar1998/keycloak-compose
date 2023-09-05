@@ -173,8 +173,8 @@ def expose_metrics():
     return metrics.export(), 200
     
 def main():
-    
-    initialize_app()
+    with app.app_context():
+        initialize_app
 
 
 if __name__ == "__main__":
