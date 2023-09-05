@@ -207,14 +207,8 @@ initialized = False
 def initialize_app():
     with app.app_context():
         initialize()
-
-# Create a new thread to initialize the app
-app_thread = threading.Thread(target=initialize_app)
-
 # Main function to run the Flask app
 if __name__ == "__main__":
-    # Start the app thread
-    app_thread.start()
-    
+    initialize_app()
     # Run the Flask app
     app.run(host='0.0.0.0', debug=True, port=5001)
