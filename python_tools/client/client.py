@@ -53,10 +53,10 @@ total_requests_metric = metrics.counter('total_requests', 'Total number of reque
 metrics.start_http_server(5002) 
 
 @app.route('/metrics')
-def prometheus_metrics():
+def expose_metrics():
     return metrics.export(), 200
 
-    
+
 def log_message(priority, message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d')
     request_id = uuid.uuid4()

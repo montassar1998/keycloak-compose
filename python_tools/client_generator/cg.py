@@ -42,9 +42,9 @@ def log_message(priority, message):
 
 
 @app.route('/metrics')
-def prometheus_metrics():
+def expose_metrics():
     return metrics.export(), 200
-    
+
 @app.route('/all_users')
 def all_users():
     total_requests_metric.inc()
