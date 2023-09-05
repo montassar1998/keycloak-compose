@@ -67,6 +67,8 @@ services:
     logging: *logging
 
   prometheus:
+    networks:
+      - ssonet
     build:
       context: ./docker
       dockerfile: prometheus.Dockerfile
