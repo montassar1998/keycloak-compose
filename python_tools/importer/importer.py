@@ -174,7 +174,7 @@ def expose_metrics():
     
 def main():
     with app.app_context():
-        initialize_app
+        initialize_app()
 
 
 if __name__ == "__main__":
