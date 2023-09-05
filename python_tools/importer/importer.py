@@ -168,7 +168,10 @@ def initialize_app():
             create_users()
         initialized = True
 
-
+@app.route('/metrics')
+def expose_metrics():
+    return metrics.export(), 200
+    
 def main():
     with app.app_context():
         initialize_app
