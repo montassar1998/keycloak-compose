@@ -115,8 +115,11 @@ def create_keycloak_user(username, password):
 @app.route('/importstatus')
 def Alive():
     # Increment the total requests metric when this endpoint is accessed
-    total_requests_metric.inc()
-
+    #total_requests_metric.inc()
+    metrics.counter('total_requests', 'Total number of requests', labels={
+        'endpoint': 'create_users'}).inc()
+    metrics.counter('total_requests', 'Total number of requests', labels={
+        'endpoint': 'create_users'}).inc()
     if isImportDone:
         return jsonify(status="Import completed"), 200
     else:
@@ -125,8 +128,9 @@ def Alive():
 
 @app.route('/create_users')
 def create_users():
-    total_requests_metric.inc()
-
+    #total_requests_metric.inc()
+    metrics.counter('total_requests', 'Total number of requests', labels={
+        'endpoint': 'create_users'}).inc()
     global isImportDone
     isImportDone = False
     # Fetch valid_users from the generator
@@ -171,7 +175,7 @@ initialized = False
 def initialize_app():
     with app.app_context():
         create_users()
-        
+
 # Create a new thread to initialize the app
 app_thread = threading.Thread(target=initialize_app)
 
