@@ -11,14 +11,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 def log_message(message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"[{timestamp} - {hostname}] {message}")
-@app.route('/metrics')
-def expose_metrics():
-    try:
-        metrics_data = metrics.export()
-        return metrics_data, 200
-    except Exception as e:
-        print(f"Error in /metrics endpoint: {str(e)}")
-        return "Error", 500
+
 hostname = socket.gethostname()
 GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 # Define Keycloak parameters
@@ -161,7 +154,14 @@ def create_users():
     isImportDone = True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
-
+@app.route('/metrics')
+def expose_metrics():
+    try:
+        metrics_data = metrics.export()
+        return metrics_data, 200
+    except Exception as e:
+        print(f"Error in /metrics endpoint: {str(e)}")
+        return "Error", 500
 # Create a flag to track whether the initialization has occurred
 initialized = False
 
