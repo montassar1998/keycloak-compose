@@ -175,6 +175,7 @@ def expose_metrics():
 def main():
     with app.app_context():
         initialize_app
+        app.run(host='0.0.0.0', debug=True, port=5001)
 
 
 if __name__ == "__main__":
