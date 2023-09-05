@@ -78,7 +78,6 @@ while retries < MAX_RETRIES:
     retries += 1
 else:
     log_message("Keycloak is still not up after several retries. Exiting...")
-    exit(1)
 
 
 def create_keycloak_user(username, password):
