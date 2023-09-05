@@ -41,6 +41,10 @@ def log_message(priority, message):
     print(log_format)
 
 
+@app.route('/metrics')
+def prometheus_metrics():
+    return metrics.export(), 200
+    
 @app.route('/all_users')
 def all_users():
     total_requests_metric.inc()
