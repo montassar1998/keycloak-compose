@@ -42,7 +42,11 @@ total_requests_metric = metrics.counter('total_requests', 'Total number of reque
 error_rate_metric = metrics.counter('error_rate', 'Error rate of API requests', labels={
                                    'endpoint': lambda: request.endpoint, 'status_code': 'HTTP status code'})
 
-
+@app.route('/metrics')
+def metrics():
+    # Your metrics collection logic here
+    return metrics.export(), 200  # Return the metrics in the Prometheus format
+    
 def get_admin_access_token():
     data = {
         "grant_type": "password",
