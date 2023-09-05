@@ -166,22 +166,10 @@ def expose_metrics():
 initialized = False
 
 
-# Function to initialize the application (create users)
-def initialize_app():
-    global initialized
-    if not initialized:
-        with app.app_context():
-            create_users()
-            initialized = True
-            app.run(host='0.0.0.0', debug=True, port=5001)
+# Initialize the application and invoke create_users()
+with app.app_context():
+    create_users()
 
-
-    
-def main():
-    
-    initialize_app
-        
-
-
+# Main function to run the app
 if __name__ == "__main__":
-    main()
+    app.run(host='0.0.0.0', debug=True, port=5001)
