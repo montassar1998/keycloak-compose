@@ -160,6 +160,38 @@ def create_users():
     isImportDone = True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
+
+def initialize():
+
+    global isImportDone
+    isImportDone = False
+    # Fetch valid_users from the generator
+    response = requests.get(SERVICE_URL)
+    if response.status_code != 200:
+
+        log_message(f"Error content from the response: {response.content}")
+        # Increment the error rate metric for non-200 responses
+        error_rate_metric.labels(status_code=str(response.status_code)).inc()
+
+        return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
+
+    valid_users = response.json()
+    users_created = 0
+
+    for user in valid_users:
+        username = user['username']
+        password = user['password']
+        if create_keycloak_user(username, password):
+            users_created += 1
+            log_message(
+                f"Created user {username} in Keycloak. Total: {users_created}")
+        else:
+            log_message(f"Error creating user {username} in Keycloak")
+
+    log_message(f"Is Import Done: {isImportDone}")
+    isImportDone = True
+    return jsonify({"message": f"Created {users_created} users in Keycloak"})
+
 @app.route('/metrics')
 def expose_metrics():
     try:
@@ -174,7 +206,7 @@ initialized = False
 # Function to create users and run the Flask app
 def initialize_app():
     with app.app_context():
-        create_users()
+        initialize()
 
 # Create a new thread to initialize the app
 app_thread = threading.Thread(target=initialize_app)
