@@ -36,6 +36,11 @@ total_requests_metric = metrics.counter('total_requests', 'Total number of reque
                                         'endpoint': lambda: request.endpoint})
 
 
+
+# Create a custom error rate metric
+error_rate_metric = metrics.counter('error_rate', 'Error rate of API requests', labels={
+                                   'endpoint': lambda: request.endpoint, 'status_code': 'HTTP status code'})
+
 def get_admin_access_token():
     data = {
         "grant_type": "password",
@@ -128,6 +133,9 @@ def create_users():
     if response.status_code != 200:
 
         log_message(f"Error content from the response: {response.content}")
+        # Increment the error rate metric for non-200 responses
+        error_rate_metric.labels(status_code=str(response.status_code)).inc()
+
         return jsonify({"message": "Failed to fetch valid users from generator", "error": response.content}), 500
 
     valid_users = response.json()
