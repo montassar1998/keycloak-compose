@@ -198,7 +198,7 @@ def expose_metrics():
         metrics_data = metrics.export()
         return metrics_data, 200
     except Exception as e:
-        print(f"Error in /metrics endpoint: {str(e)}")
+        log_message(f"Error in /metrics endpoint: {str(e)}")
         return "Error", 500
 # Create a flag to track whether the initialization has occurred
 initialized = False
