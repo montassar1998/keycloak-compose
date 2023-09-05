@@ -50,11 +50,7 @@ network_error_metric = metrics.counter(
 total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={
                                         'endpoint': lambda: request.endpoint})
 
-metrics.start_http_server(5002) 
 
-@app.route('/metrics')
-def expose_metrics():
-    return metrics.export(), 200
 
 
 def log_message(priority, message):

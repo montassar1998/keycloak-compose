@@ -41,11 +41,7 @@ total_requests_metric = metrics.counter('total_requests', 'Total number of reque
 error_rate_metric = metrics.counter('error_rate', 'Error rate of API requests', labels={
                                    'endpoint': lambda: request.endpoint, 'status_code': 'HTTP status code'})
 
-@app.route('/metrics')
-def expose_metrics():
-    return metrics.export(), 200
 
-metrics.start_http_server(5001) 
 def get_admin_access_token():
     data = {
         "grant_type": "password",

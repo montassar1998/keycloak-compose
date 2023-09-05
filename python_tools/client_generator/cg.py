@@ -25,7 +25,7 @@ total_requests_metric = metrics.counter(
 error_responses_metric = metrics.counter(
     'error_responses', 'Number of error responses')
 
-metrics.start_http_server(5000) 
+
 def generate_id(prefix="RQ"):
     """Generate a unique ID based on current timestamp."""
     return prefix + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
@@ -41,9 +41,6 @@ def log_message(priority, message):
     print(log_format)
 
 
-@app.route('/metrics')
-def expose_metrics():
-    return metrics.export(), 200
 
 @app.route('/all_users')
 def all_users():
