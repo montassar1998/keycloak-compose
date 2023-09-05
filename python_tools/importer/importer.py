@@ -178,8 +178,8 @@ def initialize_app():
 
     
 def main():
-    with app.app_context():
-        initialize_app
+    
+    initialize_app()
         
 
 
