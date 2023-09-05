@@ -8,9 +8,7 @@ import datetime
 from prometheus_flask_exporter import PrometheusMetrics
 
 
-def log_message(message):
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    print(f"[{timestamp} - {hostname}] {message}")
+
 
 hostname = socket.gethostname()
 GENERATOR_NAME = os.getenv("GENERATOR_NAME")
@@ -30,6 +28,10 @@ ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 metrics.info('app_info', 'Client application info', version='1.0.3')
+
+def log_message(message):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"[{timestamp} - {hostname}] {message}")
 
 total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={
                                         'endpoint': lambda: request.endpoint})
@@ -165,11 +167,18 @@ def expose_metrics():
 # Create a flag to track whether the initialization has occurred
 initialized = False
 
+# Function to create users and run the Flask app
+def initialize_app():
+    with app.app_context():
+        create_users()
+        
+# Create a new thread to initialize the app
+app_thread = threading.Thread(target=initialize_app)
 
-# Initialize the application and invoke create_users()
-with app.app_context():
-    create_users()
-
-# Main function to run the app
+# Main function to run the Flask app
 if __name__ == "__main__":
+    # Start the app thread
+    app_thread.start()
+    
+    # Run the Flask app
     app.run(host='0.0.0.0', debug=True, port=5001)
