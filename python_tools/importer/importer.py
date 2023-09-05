@@ -192,14 +192,6 @@ def initialize():
     isImportDone = True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
-@app.route('/metrics')
-def expose_metrics():
-    try:
-        metrics_data = metrics.export()
-        return metrics_data, 200
-    except Exception as e:
-        log_message(f"Error in /metrics endpoint: {str(e)}")
-        return "Error", 500
 # Create a flag to track whether the initialization has occurred
 initialized = False
 
