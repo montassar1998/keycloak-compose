@@ -28,5 +28,5 @@ scrape_configs:
 
   - job_name: importer
     static_configs:
-      - targets: ['client_generator:5001']
+      - targets: ['importer:5001']
 
