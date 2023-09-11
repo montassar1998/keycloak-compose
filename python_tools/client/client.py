@@ -14,12 +14,12 @@ metrics.info('app_info', 'Client application info', version='1.0.3')
 
 # Configuration and Constants
 KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
-REALM = "master"
-CLIENT_ID = "admin-cli"
+REALM = os.getenv("REALM", "master")
+CLIENT_ID = os.getenv("CLIENT_ID", "admin-cli")
 IMPORTER_ENDPOINT = os.getenv("IMPORTER_ENDPOINT", "http://importer:5001")
 ALL_USERS_URL = os.getenv("ALL_USERS_URL")
 ADMIN_ACCESS_TOKEN_URL = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
-RATE_LIMIT_SECONDS = 1
+RATE_LIMIT_SECONDS = int(os.getenv("RATE_LIMIT_SECONDS", "1"))
 RATE_LIMIT = int(os.getenv("RATE_LIMIT", 500))
 
 last_access_time = 0

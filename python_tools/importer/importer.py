@@ -8,16 +8,15 @@ import datetime
 from prometheus_flask_exporter import PrometheusMetrics
 
 
-
-
 hostname = socket.gethostname()
 GENERATOR_NAME = os.getenv("GENERATOR_NAME")
 # Define Keycloak parameters
-KEYCLOAK_URL = "http://keycloak:8080"
-REALM = "master"
-CLIENT_ID = "admin-cli"
-USERNAME = "admin"
-PASSWORD = "keycloak"
+KEYCLOAK_URL = os.getenv("KEYCLOAK_URL", "http://keycloak:8080")
+REALM = os.getenv("REALM", "master")
+CLIENT_ID = os.getenv("CLIENT_ID", "admin-cli")
+USERNAME = os.getenv("USERNAME", "admin")
+PASSWORD = os.getenv("PASSWORD", "keycloak")
+
 isImportDone = False
 # URL for the token endpoint
 token_url = f"{KEYCLOAK_URL}/realms/{REALM}/protocol/openid-connect/token"
@@ -29,20 +28,21 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 metrics.info('app_info', 'Client application info', version='1.0.3')
 
+
 def log_message(message):
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"[{timestamp} - {hostname}] {message}")
+
 
 total_requests_metric = metrics.counter('total_requests', 'Total number of requests', labels={
                                         'endpoint': lambda: request.endpoint})
 
 
-
 # Create a custom error rate metric
 error_rate_metric = metrics.counter('error_responses', 'Error rate of API requests', labels={
-                                   'endpoint': lambda: request.endpoint, 'status_code': 'HTTP status code'})
+    'endpoint': lambda: request.endpoint, 'status_code': 'HTTP status code'})
 
-    
+
 def get_admin_access_token():
     data = {
         "grant_type": "password",
@@ -111,14 +111,16 @@ def create_keycloak_user(username, password):
     else:
         return False
 
+
 @app.route('/')
 def main():
-    pass  
+    pass
+
 
 @app.route('/importstatus')
 def Alive():
     # Increment the total requests metric when this endpoint is accessed
-    #total_requests_metric.inc()
+    # total_requests_metric.inc()
     metrics.counter('total_requests', 'Total number of requests', labels={
         'endpoint': 'create_users'}).inc()
     if isImportDone:
@@ -129,7 +131,7 @@ def Alive():
 
 @app.route('/create_users')
 def create_users():
-    #total_requests_metric.inc()
+    # total_requests_metric.inc()
     metrics.counter('total_requests', 'Total number of requests', labels={
         'endpoint': 'create_users'}).inc()
     global isImportDone
@@ -193,11 +195,11 @@ def initialize():
     isImportDone = True
     return jsonify({"message": f"Created {users_created} users in Keycloak"})
 
+
 # Create a flag to track whether the initialization has occurred
 initialized = False
 
 
-   
 app.run(host='0.0.0.0', debug=False, port=5001)
 initialize()
 if __name__ == "__main__":

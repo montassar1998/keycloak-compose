@@ -138,6 +138,9 @@ services:
       USER_PASSWORD: keycloak
       ALL_USERS_URL: http://client_generator:5000/all_users
       RATE_LIMIT: ${RATE_LIMIT}
+      REALM: ${REALM}
+      CLIENT_ID: ${REALM}
+      RATE_LIMIT_SECONDS: ${RATE_LIMIT_SECONDS}
     depends_on:
       - importer
     restart: on-failure
@@ -157,6 +160,12 @@ services:
       GENERATOR_NAME: client_generator
       KEYCLOAK_PORT: ${KC_PORT}
       VALID_USERS: ${VALID_USERS}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      REALM: ${REALM}
+      CLIENT_ID: ${CLIENT_ID}
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+
     depends_on:
       - client_generator
     deploy:

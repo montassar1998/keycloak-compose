@@ -10,7 +10,9 @@
       "backend": [
         {
           "url_pattern": "/realms/master/protocol/openid-connect/token",
-          "host": ["http://keycloak:8080"],
+          "host": [
+            "http://keycloak:8080"
+          ],
           "encoding": "form"
         }
       ]
@@ -22,7 +24,9 @@
       "backend": [
         {
           "url_pattern": "/realms/master/protocol/openid-connect/auth",
-          "host": ["http://keycloak:8080"]
+          "host": [
+            "http://keycloak:8080"
+          ]
         }
       ]
     },
@@ -33,7 +37,9 @@
       "backend": [
         {
           "url_pattern": "/realms/master/protocol/openid-connect/userinfo",
-          "host": ["http://keycloak:8080"]
+          "host": [
+            "http://keycloak:8080"
+          ]
         }
       ]
     },
@@ -44,7 +50,9 @@
       "backend": [
         {
           "url_pattern": "/realms/master/protocol/openid-connect/logout",
-          "host": ["http://keycloak:8080"]
+          "host": [
+            "http://keycloak:8080"
+          ]
         }
       ]
     }
@@ -63,14 +71,14 @@
       "reporting_period": 0,
       "exporters": {
         "prometheus": {
-            "port": 8091,
-            "namespace": "krakend",
-            "tag_host": false,
-            "tag_path": true,
-            "tag_method": true,
-            "tag_statuscode": false
+          "port": 8091,
+          "namespace": "krakend",
+          "tag_host": false,
+          "tag_path": true,
+          "tag_method": true,
+          "tag_statuscode": false
         }
+      }
     }
-  }
   }
 }
