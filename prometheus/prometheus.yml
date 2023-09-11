@@ -18,8 +18,8 @@ scrape_configs:
     static_configs:
     - targets: ['krakend:8091']
 
-  - job_name: importer
+  - job_name: client
     metrics_path: /metrics
     static_configs:
-      - targets: ['importer:5001']
+      - targets: ['pyclient:5000']
 

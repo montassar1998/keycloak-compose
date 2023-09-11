@@ -6,8 +6,15 @@ import os
 import datetime
 import socket
 import uuid
-from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_flask_exporter import PrometheusMetrics, Counter
 
+custom_metric = Counter('custom_endpoint_hits', 'Number of hits to custom endpoint')
+
+@app.route('/custom_endpoint')
+def custom_endpoint():
+    custom_metric.inc()
+    return 'Hello from custom endpoint!'
+    
 # Constants and settings
 SERVICE_NAME = os.getenv("GENERATOR_NAME")
 HOSTNAME = socket.gethostname()
