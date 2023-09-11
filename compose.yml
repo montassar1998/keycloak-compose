@@ -87,6 +87,7 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/generic_alerts.yml:/etc/prometheus/generic_alerts.yml:ro
       - ./prometheus/client_alert_rules.yml:/etc/prometheus/client_alert_rules.yml:ro
+      - ./prometheus:/prometheus  
     deploy:
       resources:
         limits:
