@@ -27,3 +27,6 @@ groups:
     annotations:
       title: "High Total Requests Rate"
       description: "The rate of total requests has exceeded 500rps over the last minute, indicating potential capacity and scalability limits."
+
+
+

@@ -30,3 +30,6 @@ scrape_configs:
     static_configs:
       - targets: ['importer:5001']
 
+rule_files:
+  - "generic_alerts.yml"
+  - "client_alert_rules.yml"

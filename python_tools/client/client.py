@@ -43,7 +43,7 @@ global_retry_metric = metrics.counter('global_retries', 'Number of global retrie
 
 # Define a counter metric for network errors
 network_error_metric = metrics.counter(
-    'network_errors', 'Number of network errors', labels={'endpoint': lambda: request.endpoint}
+    'error_responses', 'Number of network errors', labels={'endpoint': lambda: request.endpoint}
 )
 
 # Define a counter metric to measure the total number of requests

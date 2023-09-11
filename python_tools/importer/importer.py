@@ -39,7 +39,7 @@ total_requests_metric = metrics.counter('total_requests', 'Total number of reque
 
 
 # Create a custom error rate metric
-error_rate_metric = metrics.counter('error_rate', 'Error rate of API requests', labels={
+error_rate_metric = metrics.counter('error_responses', 'Error rate of API requests', labels={
                                    'endpoint': lambda: request.endpoint, 'status_code': 'HTTP status code'})
 
     
