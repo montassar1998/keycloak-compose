@@ -22,3 +22,11 @@ scrape_configs:
     static_configs:
       - targets: ['client_generator:5000']
 
+  - job_name: client
+    static_configs:
+      - targets: ['pyclient:5002']
+
+  - job_name: importer
+    static_configs:
+      - targets: ['client_generator:5001']
+
