@@ -8,8 +8,8 @@ import socket
 import uuid
 from prometheus_flask_exporter import PrometheusMetrics, Counter
 
-custom_metric = Counter('custom_endpoint_hits', 'Number of hits to custom endpoint')
-
+custom_metric = Counter('custom_endpoint_hits',
+                        'Number of hits to custom endpoint')
 
 
 # Constants and settings
@@ -50,6 +50,7 @@ def custom_endpoint():
     custom_metric.inc()
     return 'Hello from custom endpoint!'
 
+
 @app.route('/all_users')
 def all_users():
     total_requests_metric.inc()
@@ -83,6 +84,7 @@ def generate_user():
         "grant_type": "password"
     }
 
+
 @app.route('/')
 def main():
     with app.app_context():
@@ -110,7 +112,9 @@ def main():
 
         # Run Flask app
         log_message("INFO", "Starting Flask app...")
-    pass
+
+    return 'Hello from custom endpoint!'
+
 
 if __name__ == "__main__":
     main()
