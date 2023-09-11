@@ -1,25 +1,26 @@
-- alert: HighErrorRate
-  expr: |
-    max by (job) (
-      rate(error_responses_total{job=~"pyclient|client_generator|importer"}[5m])
-      / rate(total_requests_total{job=~"pyclient|client_generator|importer"}[5m])
-    ) > 0.01
-  for: 1m
-  labels:
-    severity: critical
-    group: Fadi-sso-alert-group  # Add a common group label
-  annotations:
-    description: The error rate is above 1%.
+groups:
+  - name: Fadi-sso-alert-group
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          max by (job) (
+            rate(error_responses_total{job=~"pyclient|client_generator|importer"}[5m])
+            / rate(total_requests_total{job=~"pyclient|client_generator|importer"}[5m])
+          ) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: The error rate is above 1%.
 
-- alert: HighTotalRequestsRate
-  expr: |
-    max by (job) (
-      rate(total_requests_total{job=~"pyclient|client_generator|importer"}[1m])
-    ) > 500
-  for: 1m
-  labels:
-    severity: critical
-    group: Fadi-sso-alert-group  # Add a common group label
-  annotations:
-    title: High Total Requests Rate
-    description: "The rate of total requests has exceeded 500rps over the last minute, indicating potential capacity and scalability limits."
+      - alert: HighTotalRequestsRate
+        expr: |
+          max by (job) (
+            rate(total_requests_total{job=~"pyclient|client_generator|importer"}[1m])
+          ) > 500
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          title: High Total Requests Rate
+          description: "The rate of total requests has exceeded 500rps over the last minute, indicating potential capacity and scalability limits."
