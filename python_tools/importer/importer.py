@@ -197,12 +197,10 @@ def initialize():
 initialized = False
 
 # Function to create users and run the Flask app
-def initialize_app():
+def main():
     with app.app_context():
         # Run the Flask app
         app.run(host='0.0.0.0', debug=True, port=5001)
         initialize()
-# Main function to run the Flask app
 if __name__ == "__main__":
-    initialize_app()
-    
+    main()
