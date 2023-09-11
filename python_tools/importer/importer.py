@@ -200,10 +200,8 @@ initialized = False
 def main():
     pass
 
-# Function to create users and run the Flask app
-def main():
    
-    app.run(host='0.0.0.0', debug=False, port=5001)
-    initialize()
+app.run(host='0.0.0.0', debug=False, port=5001)
+initialize()
 if __name__ == "__main__":
     main()
