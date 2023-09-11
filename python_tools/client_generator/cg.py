@@ -11,7 +11,6 @@ from prometheus_flask_exporter import PrometheusMetrics, Counter
 custom_metric = Counter('custom_endpoint_hits',
                         'Number of hits to custom endpoint')
 
-
 # Constants and settings
 SERVICE_NAME = os.getenv("GENERATOR_NAME")
 HOSTNAME = socket.gethostname()
@@ -20,8 +19,9 @@ SCRIPT_VERSION = "1.0"  # Change this as per your needs
 
 fake = Faker()
 app = Flask(__name__)
-metrics = PrometheusMetrics(app)
 
+# PrometheusMetrics setup
+metrics = PrometheusMetrics(app)
 
 # Metrics definition
 total_requests_metric = metrics.counter(
@@ -31,7 +31,7 @@ error_responses_metric = metrics.counter(
 
 
 def generate_id(prefix="RQ"):
-    """Generate a unique ID based on current timestamp."""
+    """Generate a unique ID based on the current timestamp."""
     return prefix + datetime.datetime.now().strftime('%Y%m%d%H%M%S%f')
 
 
@@ -85,37 +85,24 @@ def generate_user():
     }
 
 
+users = [generate_user() for _ in range(1000)]
+try:
+    # Save all users
+    with open('all_users.json', 'w') as f:
+        json.dump(users, f, indent=4)
+    log_message("INFO", "Saved all users data.")
+    # Select a subset of 500 users for valid_users
+    valid_users = random.sample(users, 500)
+    # Save valid users
+    with open('valid_users.json', 'w') as f:
+        json.dump(valid_users, f, indent=4)
+    log_message("INFO", "Saved valid users data.")
+except Exception as e:
+    log_message("ERROR", f"Error saving users data: {e}")
+
 @app.route('/')
 def main():
-    with app.app_context():
-        log_message("INFO", "Generating user data...")
-        users = [generate_user() for _ in range(1000)]
-
-        try:
-            # Save all users
-            with open('all_users.json', 'w') as f:
-                json.dump(users, f, indent=4)
-
-            log_message("INFO", "Saved all users data.")
-
-            # Select a subset of 500 users for valid_users
-            valid_users = random.sample(users, 500)
-
-            # Save valid users
-            with open('valid_users.json', 'w') as f:
-                json.dump(valid_users, f, indent=4)
-
-            log_message("INFO", "Saved valid users data.")
-
-        except Exception as e:
-            log_message("ERROR", f"Error saving users data: {e}")
-
-        # Run Flask app
-        log_message("INFO", "Starting Flask app...")
-
-    return 'Hello from custom endpoint!'
-
+    pass
 
 if __name__ == "__main__":
-    main()
     app.run(host='0.0.0.0', debug=True, port=5000)
