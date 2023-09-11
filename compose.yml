@@ -85,8 +85,8 @@ services:
       - ${PROMETHEUS_PORT}:9090
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./prometheus/prometheus.yml:/etc/prometheus/generic_alerts.yml:ro
-      - ./prometheus/prometheus.yml:/etc/prometheus/client_alert_rules.yml:ro
+      - ./prometheus/generic_alerts.yml:/etc/prometheus/generic_alerts.yml:ro
+      - ./prometheus/client_alert_rules.yml:/etc/prometheus/client_alert_rules.yml:ro
     deploy:
       resources:
         limits:
