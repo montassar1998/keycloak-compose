@@ -90,15 +90,13 @@ try:
     # Save all users
     with open('all_users.json', 'w') as f:
         json.dump(users, f, indent=4)
-    log_message("INFO", "Saved all users data.")
     # Select a subset of 500 users for valid_users
     valid_users = random.sample(users, 500)
     # Save valid users
     with open('valid_users.json', 'w') as f:
         json.dump(valid_users, f, indent=4)
-    log_message("INFO", "Saved valid users data.")
 except Exception as e:
-    log_message("ERROR", f"Error saving users data: {e}")
+    print(f"Error saving users data: {e}")
 
 @app.route('/')
 def main():
