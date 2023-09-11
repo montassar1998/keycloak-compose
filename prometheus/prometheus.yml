@@ -18,7 +18,7 @@ scrape_configs:
     static_configs:
     - targets: ['krakend:8091']
 
-  - job_name: client
+  - job_name: client_generator
     static_configs:
-      - targets: ['127.0.0.1:5000']
+      - targets: ['client_generator:5000']
 
