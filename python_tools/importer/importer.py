@@ -111,13 +111,14 @@ def create_keycloak_user(username, password):
     else:
         return False
 
+@app.route('/')
+def main():
+    pass  
 
 @app.route('/importstatus')
 def Alive():
     # Increment the total requests metric when this endpoint is accessed
     #total_requests_metric.inc()
-    metrics.counter('total_requests', 'Total number of requests', labels={
-        'endpoint': 'create_users'}).inc()
     metrics.counter('total_requests', 'Total number of requests', labels={
         'endpoint': 'create_users'}).inc()
     if isImportDone:
