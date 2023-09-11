@@ -30,9 +30,6 @@ total_requests_metric = metrics.counter(
 error_responses_metric = metrics.counter(
     'error_responses', 'Number of error responses')
 
-@app.route('/metrics')
-def export_metrics():
-    return metrics.export()
 
 def generate_id(prefix="RQ"):
     """Generate a unique ID based on the current timestamp."""
@@ -107,4 +104,4 @@ def main():
     pass
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=False, port=5000)
