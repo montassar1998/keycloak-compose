@@ -196,9 +196,6 @@ def initialize():
 # Create a flag to track whether the initialization has occurred
 initialized = False
 
-@app.route('/')
-def main():
-    pass
 
    
 app.run(host='0.0.0.0', debug=False, port=5001)
