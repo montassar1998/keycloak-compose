@@ -110,7 +110,7 @@ def main():
 
         # Run Flask app
         log_message("INFO", "Starting Flask app...")
-
+    pass
 
 if __name__ == "__main__":
     main()
